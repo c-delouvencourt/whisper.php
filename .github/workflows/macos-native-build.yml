@@ -23,9 +23,6 @@ jobs:
           ref: v1.7.2
           path: whisper.cpp
 
-      - name: Install build dependencies
-        run: brew install coreutils cmake
-
       - name: Build MacOS Libraries
         run: make macos
 

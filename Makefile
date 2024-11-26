@@ -11,7 +11,7 @@ WHISPER_CPP_DIR ?= whisper.cpp
 
 # Platforms and architectures
 LINUX_ARCHS := x64 arm64
-MACOS_ARCHS := x64 arm64
+MACOS_ARCHS := x86_64 arm64
 
 # AVX support flags
 AVX_FLAGS := -DGGML_AVX=ON -DGGML_AVX2=ON -DGGML_FMA=ON -DGGML_F16C=ON
