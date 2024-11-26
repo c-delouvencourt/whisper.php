@@ -1,0 +1,40 @@
+name: All Platform Builds
+on:
+  workflow_dispatch:
+
+jobs:
+  linux-native-build:
+    uses: ./.github/workflows/linux-native-build.yml
+
+  linux-noavx-build:
+    uses: ./.github/workflows/linux-noavx-build.yml
+
+  linux-cuda-build:
+    uses: ./.github/workflows/linux-cuda-build.yml
+
+  linux-openvino-build:
+    uses: ./.github/workflows/linux-openvino-build.yml
+
+  macos-native-build:
+    uses: ./.github/workflows/macos-native-build.yml
+
+  macos-coreml-build:
+    uses: ./.github/workflows/macos-coreml-build.yml
+
+  release-artifacts:
+    needs:
+      - linux-native-build
+      - linux-noavx-build
+      - linux-cuda-build
+      - linux-openvino-build
+      - macos-native-build
+      - macos-coreml-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Combine Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: all-artifacts
+
+      - name: Display structure of downloaded files
+        run: ls -R all-artifacts

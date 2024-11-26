@@ -7,6 +7,7 @@ BUILD_TYPE ?= Release
 CMAKE ?= cmake
 BUILD_DIR ?= build
 RUNTIME_DIR ?= runtimes
+WHISPER_CPP_DIR ?= whisper.cpp
 
 # Platforms and architectures
 LINUX_ARCHS := x64 arm64
@@ -25,7 +26,7 @@ define linux_build
 	$(eval BUILD_PATH := $(BUILD_DIR)/linux-$(ARCH)$(2))
 	$(eval EXTRA_FLAGS := $(3))
 	rm -rf $(BUILD_PATH)
-	$(CMAKE) -S . -B $(BUILD_PATH) -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_PROCESSOR=$(ARCH) $(CMAKE_COMMON_PARAMS) $(EXTRA_FLAGS)
+	$(CMAKE) -S $(WHISPER_CPP_DIR) -B $(BUILD_PATH) -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_PROCESSOR=$(ARCH) $(CMAKE_COMMON_PARAMS) $(EXTRA_FLAGS)
 	$(CMAKE) --build $(BUILD_PATH)
 	mkdir -p $(RUNTIME_DIR)/linux-$(ARCH)$(2)
 	cp $(BUILD_PATH)/whisper.cpp/src/libwhisper.so $(RUNTIME_DIR)/linux-$(ARCH)$(2)/
@@ -38,7 +39,7 @@ define macos_build
 	$(eval BUILD_PATH := $(BUILD_DIR)/macos-$(ARCH)$(2))
 	$(eval EXTRA_FLAGS := $(3))
 	rm -rf $(BUILD_PATH)
-	$(CMAKE) -S . -B $(BUILD_PATH) -DCMAKE_OSX_ARCHITECTURES=$(ARCH) $(CMAKE_COMMON_PARAMS) $(EXTRA_FLAGS)
+	$(CMAKE) -S $(WHISPER_CPP_DIR) -B $(BUILD_PATH) -DCMAKE_OSX_ARCHITECTURES=$(ARCH) $(CMAKE_COMMON_PARAMS) $(EXTRA_FLAGS)
 	$(CMAKE) --build $(BUILD_PATH)
 	mkdir -p $(RUNTIME_DIR)/macos-$(ARCH)$(2)
 	cp $(BUILD_PATH)/whisper.cpp/src/libwhisper.dylib $(RUNTIME_DIR)/macos-$(ARCH)$(2)/

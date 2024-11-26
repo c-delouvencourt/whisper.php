@@ -13,11 +13,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Checkout whisper.cpp
+        uses: actions/checkout@v4
         with:
           repository: ggerganov/whisper.cpp
           ref: v1.7.2
-          submodules: true
+          path: whisper.cpp
 
       - name: Install cross-compilation toolchains
         run: |
