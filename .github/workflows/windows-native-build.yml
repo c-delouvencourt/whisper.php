@@ -10,6 +10,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          path: whisper.php
 
       - name: Checkout whisper.cpp
         uses: actions/checkout@v4
@@ -23,7 +25,8 @@ jobs:
 
       - name: Run build script
         run: |
-          .\scripts\build.bat cpu whisper-cpp\
+          cd whisper.php
+          .\scripts\build.bat cpu ..\whisper-cpp\
           cd ${{ github.workspace }}\whisper-cpp\build\bin\Release
           ren whisper.dll libwhisper.dll
 
