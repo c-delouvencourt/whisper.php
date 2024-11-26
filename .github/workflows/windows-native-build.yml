@@ -23,7 +23,7 @@ jobs:
 
       - name: Run build script
         run: |
-          .\scripts\build.bat cpu ..\whisper-cpp\
+          .\scripts\build.bat cpu whisper-cpp\
           cd ${{ github.workspace }}\whisper-cpp\build\bin\Release
           ren whisper.dll libwhisper.dll
 
