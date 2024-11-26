@@ -1,0 +1,40 @@
+{
+  "name": "codewithkyrian/whisper.php",
+  "description": "PHP bindings for OpenAI Whisper made possible by whisper.cpp",
+  "type": "library",
+  "version": "1.0.0",
+  "require": {
+    "php": "^8.1",
+    "ext-ffi": "*",
+    "psr/log": "^3.0"
+  },
+  "require-dev": {
+    "symfony/var-dumper": "^7.1",
+    "pestphp/pest": "^3.5",
+    "mockery/mockery": "^1.6"
+  },
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Codewithkyrian\\Whisper\\": "src/"
+    },
+    "files": [
+      "src/Utils.php"
+    ]
+  },
+  "scripts": {
+    "test": "vendor/bin/pest",
+    "test:coverage": "XDEBUG_MODE=coverage ./vendor/bin/pest --coverage"
+  },
+  "authors": [
+    {
+      "name": "Kyrian Obikwelu",
+      "email": "kyrianobikwelu@gmail.com"
+    }
+  ],
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  }
+}
