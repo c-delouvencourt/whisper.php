@@ -31,7 +31,7 @@ jobs:
           path: whisper.cpp
 
       - name: Install build dependencies
-        run: brew install coreutils cmake openmp
+        run: brew install coreutils cmake libomp
 
       - name: Build MacOS Libraries
         run: make macos_${{ matrix.arch }}
