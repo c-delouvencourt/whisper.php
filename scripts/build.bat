@@ -13,6 +13,7 @@ goto commonexit
 :cpu
 	echo Starting building cpu target...
 	cd %whisper_path%
+	echo %whisper_path%
 	rmdir .\build /s /q
 	cmake -S . -B ./build -A x64 -DCMAKE_BUILD_TYPE=Release -DWHISPER_BUILD_TESTS=OFF -DWHISPER_BUILD_EXAMPLES=OFF
 

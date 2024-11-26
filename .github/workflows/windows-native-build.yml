@@ -6,6 +6,7 @@ on:
 
 jobs:
   windows-native-build:
+    name: Build for Windows (x86_64)
     runs-on: windows-latest
     steps:
       - name: Checkout repository
