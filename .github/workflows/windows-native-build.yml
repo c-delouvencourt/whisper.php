@@ -24,12 +24,12 @@ jobs:
 
       - name: Run build script
         run: |
-          .\scripts\build.bat cpu ${{ github.workspace }}\whisper.cpp\
-          cd ${{ github.workspace }}\whisper-cpp\build\bin\Release
+          .\scripts\build.bat cpu \whisper.cpp\
+          cd ${{ github.workspace }}\whisper.cpp\build\bin\Release
           ren whisper.dll libwhisper.dll
 
       - name: Upload Windows Build Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: windows-build
-          path: whisper-cpp/build/bin/Release/libwhisper.dll
+          path: whisper.cpp/build/bin/Release/libwhisper.dll
