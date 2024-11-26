@@ -42,8 +42,8 @@ define macos_build
 	$(CMAKE) -S $(WHISPER_CPP_DIR) -B $(BUILD_PATH) -DCMAKE_OSX_ARCHITECTURES=$(ARCH) $(CMAKE_COMMON_PARAMS) $(EXTRA_FLAGS)
 	$(CMAKE) --build $(BUILD_PATH)
 	mkdir -p $(RUNTIME_DIR)/macos-$(ARCH)$(2)
-	cp $(BUILD_PATH)/src/libwhisper.dylib $(RUNTIME_DIR)/macos-$(ARCH)$(2)/
-	cp $(BUILD_PATH)/ggml/src/libggml-whisper.dylib $(RUNTIME_DIR)/macos-$(ARCH)$(2)/
+	cp $(WHISPER_CPP_DIR)/$(BUILD_PATH)/src/libwhisper.dylib $(RUNTIME_DIR)/macos-$(ARCH)$(2)/
+	cp $(WHISPER_CPP_DIR)/$(BUILD_PATH)/ggml/src/libggml-whisper.dylib $(RUNTIME_DIR)/macos-$(ARCH)$(2)/
 endef
 
 # Linux build targets
