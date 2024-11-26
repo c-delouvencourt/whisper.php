@@ -10,15 +10,8 @@ on:
 
 jobs:
   macos-coreml-build:
-    strategy:
-      matrix:
-        include:
-          - runner: macos-13  # Intel
-            arch: x64
-          - runner: macos-14  # Apple Silicon
-            arch: arm64
+    runs-on: macos-latest
 
-    runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -31,11 +24,11 @@ jobs:
           path: whisper.cpp
 
       - name: Build MacOS CoreML Libraries
-        run: make macos_coreml_${{ matrix.arch }}
+        run: make macos_coreml
 
       - name: Upload Mac CoreML Build Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: mac-${{ matrix.arch }}-coreml-build
-          path: runtimes/macos-${{ matrix.arch }}_coreml/*
+          name: mac-coreml-build
+          path: runtimes/macos-*_coreml/*
           retention-days: 7
