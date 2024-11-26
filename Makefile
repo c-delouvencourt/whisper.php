@@ -12,6 +12,7 @@ WHISPER_CPP_DIR ?= whisper.cpp
 # Platforms and architectures
 LINUX_ARCHS := x64 arm64
 MACOS_ARCHS := x86_64 arm64
+WINDOWS_ARCHS := x64
 
 # AVX support flags
 AVX_FLAGS := -DGGML_AVX=ON -DGGML_AVX2=ON -DGGML_FMA=ON -DGGML_F16C=ON
@@ -44,6 +45,16 @@ define macos_build
 	mkdir -p $(RUNTIME_DIR)/macos-$(ARCH)$(2)
 	cp $(BUILD_PATH)/src/libwhisper.dylib $(RUNTIME_DIR)/macos-$(ARCH)$(2)/
 	cp $(BUILD_PATH)/ggml/src/libggml.dylib $(RUNTIME_DIR)/macos-$(ARCH)$(2)/
+endef
+
+define windows_build
+	$(eval ARCH := $(1))
+	$(eval BUILD_PATH := $(BUILD_DIR)/windows-$(ARCH)$(2))
+	$(eval EXTRA_FLAGS := $(3))
+	rm -rf $(BUILD_PATH)
+	$(CMAKE) -S $(WHISPER_CPP_DIR) -B $(BUILD_PATH) -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_SYSTEM_PROCESSOR=$(ARCH) $(CMAKE_COMMON_PARAMS) $(EXTRA_FLAGS)
+	cd $(BUILD_PATH)
+	msbuild ALL_BUILD.vcxproj -t:build -p:configuration=Release -p:platform=$(ARCH)
 endef
 
 # Linux build targets
@@ -80,6 +91,18 @@ macos_%:
 macos_coreml: $(addprefix macos_coreml_,$(MACOS_ARCHS))
 macos_coreml_%:
 	$(call macos_build,$*,_coreml,$(AVX_FLAGS) -DWHISPER_COREML=ON -DWHISPER_COREML_ALLOW_FALLBACK=ON)
+
+# Windows build targets
+.PHONY: windows
+windows: $(addprefix windows_,$(WINDOWS_ARCHS))
+windows_%:
+	$(call windows_build,$*,,$(AVX_FLAGS))
+
+# Windows CUDA builds
+windows_cuda: $(addprefix windows_cuda_,$(WINDOWS_ARCHS))
+windows_cuda_%:
+	$(eval ARCH := $(subst windows_cuda_,,$@))
+	$(call windows_build,$(ARCH),_cuda,$(AVX_FLAGS) -DGGML_CUDA=ON -DWHISPER_CUBLAS=ON)
 
 # Clean build artifacts
 .PHONY: clean
