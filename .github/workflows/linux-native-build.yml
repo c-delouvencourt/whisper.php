@@ -6,7 +6,7 @@ on:
     branches: [main]
     paths:
       - 'src/**'
-      - '.github/workflows/linux-build.yml'
+      - '.github/workflows/linux-native-build.yml'
 
 jobs:
   linux-native-build:
