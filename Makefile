@@ -51,6 +51,7 @@ endef
 define windows_build
 	VSWHERE := "C:\ProgramData\Chocolatey\bin\vswhere.exe"
 	VS_PATH := $(shell $(VSWHERE) -products * -requires Microsoft.Component.MSBuild -property installationPath -latest)
+	echo $(VS_PATH)
 	ifeq ($(VS_PATH),)
 		$(error Could not find Visual Studio installation)
 	endif
