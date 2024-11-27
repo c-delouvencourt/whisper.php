@@ -51,12 +51,13 @@ define windows_build
 	$(eval ARCH := $(1))
 	$(eval BUILD_PATH := $(BUILD_DIR)/windows-$(ARCH)$(2))
 	$(eval EXTRA_FLAGS := $(3))
-	if exist "$(BUILD_PATH)" rmdir /s /q "$(BUILD_PATH)"
+	rm -rf "$(BUILD_PATH)"
+	mkdir -p "$(BUILD_PATH)"
 	$(CMAKE) -S $(WHISPER_CPP_DIR) -B $(BUILD_PATH) -A $(ARCH) $(CMAKE_COMMON_PARAMS) $(EXTRA_FLAGS)
 	cd "$(BUILD_PATH)" && msbuild ALL_BUILD.vcxproj -t:build -p:configuration=Release -p:platform=x64
-	if not exist "$(RUNTIME_DIR)\windows-$(TARGET)" mkdir "$(RUNTIME_DIR)\windows-$(TARGET)"
-	copy "$(BUILD_PATH)\src\Release\whisper.dll" "$(RUNTIME_DIR)\windows-$(TARGET)\"
-	copy "$(BUILD_PATH)\ggml\src\Release\ggml.dll" "$(RUNTIME_DIR)\windows-$(TARGET)\"
+	mkdir -p "$(RUNTIME_DIR)/windows-$(TARGET)"
+	cp "$(BUILD_PATH)/src/Release/whisper.dll" "$(RUNTIME_DIR)/windows-$(TARGET)/"
+	cp "$(BUILD_PATH)/ggml/src/Release/ggml.dll" "$(RUNTIME_DIR)/windows-$(TARGET)/"
 endef
 
 # Linux build targets
