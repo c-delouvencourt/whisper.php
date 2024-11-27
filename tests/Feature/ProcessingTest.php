@@ -90,7 +90,7 @@ it('can handle parallel processing', function () {
 
     $fullParams = WhisperFullParams::default();
 
-    $ctx->fullParallel($pcm, $fullParams, 3);
+    $ctx->fullParallel($pcm, $fullParams, 2);
 
     $numSegments = $ctx->nSegments();
     expect($numSegments)->toBeGreaterThan(0);

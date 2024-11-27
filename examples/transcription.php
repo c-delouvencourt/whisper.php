@@ -15,7 +15,7 @@ use function Codewithkyrian\Whisper\toTimestamp;
 
 require_once __DIR__.'/../vendor/autoload.php';
 
-$modelPath = ModelLoader::loadModel('tiny', __DIR__.'/models');
+$modelPath = ModelLoader::loadModel('tiny.en', __DIR__.'/models');
 $audioPath = __DIR__.'/sounds/jfk.wav';
 
 try {
