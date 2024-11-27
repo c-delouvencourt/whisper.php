@@ -48,32 +48,6 @@ define macos_build
 	cp $(BUILD_PATH)/ggml/src/libggml.dylib $(RUNTIME_DIR)/macos-$(ARCH)$(2)/
 endef
 
-define windows_build
-	VSWHERE := $(shell dirname $(shell which vswhere.exe 2>/dev/null))
-	VSINSTALL_PATH := $(shell $(VSWHERE)/vswhere.exe -products * -requires Microsoft.Component.MSBuild -property installationPath -latest)
-	echo $(VSINSTALL_PATH)
-    # Fallback MSBuild paths
-    MSBUILD_CANDIDATES := \
-        "$(MSBUILD_PATH)/MSBuild/Current/Bin/MSBuild.exe" \
-        "$(MSBUILD_PATH)/MSBuild/15.0/Bin/MSBuild.exe" \
-        "/c/Program Files/Microsoft Visual Studio/2022/Enterprise/MSBuild/Current/Bin/MSBuild.exe" \
-        "/c/Program Files (x86)/Microsoft Visual Studio/2022/Enterprise/MSBuild/Current/Bin/MSBuild.exe"
-
-    # Find first existing MSBuild
-    MSBUILD := $(firstword $(wildcard $(MSBUILD_CANDIDATES)))
-    echo $(MSBUILD)
-	$(eval ARCH := $(1))
-	$(eval BUILD_PATH := $(BUILD_DIR)/windows-$(ARCH)$(2))
-	$(eval EXTRA_FLAGS := $(3))
-	rm -rf "$(BUILD_PATH)"
-	mkdir -p "$(BUILD_PATH)"
-	$(CMAKE) -S $(WHISPER_CPP_DIR) -B $(BUILD_PATH) -A $(ARCH) $(CMAKE_COMMON_PARAMS) $(EXTRA_FLAGS)
-	cd "$(BUILD_PATH)" && "$(MSBUILD)" ALL_BUILD.vcxproj -t:build -p:configuration=Release -p:platform=x64
-	mkdir -p "$(RUNTIME_DIR)/windows-$(TARGET)"
-	cp "$(BUILD_PATH)/src/Release/whisper.dll" "$(RUNTIME_DIR)/windows-$(TARGET)/"
-	cp "$(BUILD_PATH)/ggml/src/Release/ggml.dll" "$(RUNTIME_DIR)/windows-$(TARGET)/"
-endef
-
 # Linux build targets
 .PHONY: linux linux_cuda linux_openvino
 linux: $(addprefix linux_,$(LINUX_ARCHS))
@@ -108,18 +82,6 @@ macos_%:
 macos_coreml: $(addprefix macos_coreml_,$(MACOS_ARCHS))
 macos_coreml_%:
 	$(call macos_build,$*,_coreml,$(AVX_FLAGS) -DWHISPER_COREML=ON -DWHISPER_COREML_ALLOW_FALLBACK=ON)
-
-# Windows build targets
-.PHONY: windows
-windows: $(addprefix windows_,$(WINDOWS_ARCHS))
-windows_%:
-	$(call windows_build,$*,,$(AVX_FLAGS))
-
-# Windows CUDA builds
-windows_cuda: $(addprefix windows_cuda_,$(WINDOWS_ARCHS))
-windows_cuda_%:
-	$(eval ARCH := $(subst windows_cuda_,,$@))
-	$(call windows_build,$(ARCH),_cuda,$(AVX_FLAGS) -DGGML_CUDA=ON)
 
 # Clean build artifacts
 .PHONY: clean

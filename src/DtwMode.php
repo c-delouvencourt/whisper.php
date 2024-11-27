@@ -12,7 +12,6 @@ enum DtwMode
     case None;
 
     /**
-     *
      * Use N Top Most layers from loaded model
      */
     case TopMost;

@@ -10,7 +10,7 @@ class WhisperGrammarElement
 {
     public function __construct(
         public readonly WhisperGrammarElementType $elementType,
-        public readonly int                       $value
+        public readonly int $value
     ) {}
 
     /**
@@ -29,6 +29,7 @@ class WhisperGrammarElement
         $element = $ffi->new('struct whisper_grammar_element');
         $element->type = $this->elementType->value;
         $element->value = $this->value;
+
         return $element;
     }
 

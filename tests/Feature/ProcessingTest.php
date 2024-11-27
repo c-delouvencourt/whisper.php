@@ -8,7 +8,7 @@ use Codewithkyrian\Whisper\WhisperContext;
 use Codewithkyrian\Whisper\WhisperFullParams;
 
 beforeEach(function () {
-    if (!extension_loaded('ffi')) {
+    if (! extension_loaded('ffi')) {
         $this->markTestSkipped('FFI extension is not loaded.');
     }
 
@@ -70,7 +70,6 @@ it('supports token timestamps', function () {
     }
 });
 
-
 it('can process across multiple threads', function () {
     $ctx = new WhisperContext($this->modelPath);
     $state = $ctx->createState();
@@ -84,7 +83,6 @@ it('can process across multiple threads', function () {
     expect($numSegments)->toBeGreaterThan(0);
 });
 
-
 it('can handle parallel processing', function () {
     ini_set('memory_limit', -1);
     $ctx = new WhisperContext($this->modelPath);
@@ -92,7 +90,7 @@ it('can handle parallel processing', function () {
 
     $fullParams = WhisperFullParams::default();
 
-    $ctx->fullParallel($pcm, $fullParams, 4);
+    $ctx->fullParallel($pcm, $fullParams, 3);
 
     $numSegments = $ctx->nSegments();
     expect($numSegments)->toBeGreaterThan(0);
@@ -116,7 +114,7 @@ it('can convert raw PCM audio to log mel spectrogram', function () {
 
     $pcm = loadTestAudio('jfk');
 
-    $state->pcmToMel($pcm, 4);
+    $state->pcmToMel($pcm, 3);
 
     expect($state->nLen())->toBeGreaterThan(0);
 });
@@ -135,7 +133,6 @@ it('can get a short string for any language id', function () {
         ->and($ctx->langStr(2))->toBe('de');
 });
 
-
 it('can get a full string for any language id', function () {
     $ctx = new WhisperContext($this->modelPath);
 
@@ -149,7 +146,7 @@ it('can auto-detect language', function () {
 
     $pcm = loadTestAudio('jfk');
 
-    $state->pcmToMel($pcm, 4);
+    $state->pcmToMel($pcm, 3);
 
     $result = $state->langDetect(5500, 1);
 

@@ -2,14 +2,13 @@
 
 declare(strict_types=1);
 
-use Codewithkyrian\Whisper\FFILoader;
-use Codewithkyrian\Whisper\SegmentData;
+use Codewithkyrian\Whisper\LibraryLoader;
 use Codewithkyrian\Whisper\WhisperFullParams;
 use Codewithkyrian\Whisper\WhisperGrammarElement;
 use Codewithkyrian\Whisper\WhisperGrammarElementType;
 
 beforeEach(function () {
-    $this->ffi = FFILoader::getInstance('whisper');
+    $this->ffi = LibraryLoader::getInstance('whisper');
 });
 
 it('correctly converts default parameters to C structure', function () {

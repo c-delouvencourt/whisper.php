@@ -17,21 +17,22 @@ class Samplerate
      * If not, it creates a new instance by defining the header contents and library path.
      *
      * @return FFI The FFI instance.
+     *
      * @throws Exception
      */
     public static function ffi(): FFI
     {
-        return FFILoader::getInstance('samplerate');
+        return LibraryLoader::getInstance('samplerate');
     }
 
     /**
      * Creates a new instance of the specified type.
      *
-     * @param string $type The type of the instance to create.
-     * @param bool $owned Whether the instance should be owned. Default is true.
-     * @param bool $persistent Whether the instance should be persistent. Default is false.
-     *
+     * @param  string  $type  The type of the instance to create.
+     * @param  bool  $owned  Whether the instance should be owned. Default is true.
+     * @param  bool  $persistent  Whether the instance should be persistent. Default is false.
      * @return CData|null The created instance, or null if the creation failed.
+     *
      * @throws Exception
      */
     public static function new(string $type, bool $owned = true, bool $persistent = false): ?CData
@@ -42,10 +43,10 @@ class Samplerate
     /**
      * Casts a pointer to a different type.
      *
-     * @param CType|string $type The type to cast to.
-     * @param CData|int|float|bool|null $ptr The pointer to cast.
-     *
+     * @param  CType|string  $type  The type to cast to.
+     * @param  CData|int|float|bool|null  $ptr  The pointer to cast.
      * @return ?CData The cast pointer, or null if the cast failed.
+     *
      * @throws Exception
      */
     public static function cast(CType|string $type, CData|int|float|bool|null $ptr): ?CData
@@ -56,9 +57,9 @@ class Samplerate
     /**
      * Retrieves the value of the enum constant with the given name.
      *
-     * @param string $name The name of the enum constant.
-     *
+     * @param  string  $name  The name of the enum constant.
      * @return mixed The value of the enum constant.
+     *
      * @throws Exception
      */
     public static function enum(string $name): mixed
@@ -79,10 +80,10 @@ class Samplerate
     /**
      * Creates a new sample rate converter.
      *
-     * @param int $converterType The type of the converter.
-     * @param int $channels The number of channels.
-     *
+     * @param  int  $converterType  The type of the converter.
+     * @param  int  $channels  The number of channels.
      * @return CData The state of the created converter.
+     *
      * @throws RuntimeException|Exception If the converter fails to create.
      */
     public static function srcNew(int $converterType, int $channels): CData
@@ -99,14 +100,12 @@ class Samplerate
         return $state;
     }
 
-
     /**
      * Processes the given data using the specified sample rate converter state.
      *
-     * @param CData $state The state of the sample rate converter.
-     * @param CData $data The data to be processed.
+     * @param  CData  $state  The state of the sample rate converter.
+     * @param  CData  $data  The data to be processed.
      *
-     * @return void
      * @throws RuntimeException|Exception If the sample rate conversion fails.
      */
     public static function srcProcess(CData $state, CData $data): void

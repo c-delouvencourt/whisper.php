@@ -1,6 +1,7 @@
 <?php
 
-use Codewithkyrian\Whisper\Whisper;
+use Codewithkyrian\Whisper\ModelLoader;
+
 use function Codewithkyrian\Whisper\readAudio;
 
 function loadTestAudioPath($name): string
@@ -22,5 +23,5 @@ function loadTestAudio(string $name): array
 
 function loadTestModel(string $name): string
 {
-    return Whisper::downloadModel($name, __DIR__.'/../examples/models');
+    return ModelLoader::loadModel($name, __DIR__.'/../examples/models');
 }

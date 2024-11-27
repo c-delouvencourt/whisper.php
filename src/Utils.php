@@ -37,9 +37,9 @@ function readAudio($path, int $chunkSize = 2048): array
             if ($srcData->input_frames < $chunkSize) {
                 break;
             }
+
             continue;
         }
-
 
         /* The last read will not be a full buffer, so snd_of_input. */
         if ($srcData->input_frames < $chunkSize) {
@@ -69,8 +69,10 @@ function readAudio($path, int $chunkSize = 2048): array
         for ($i = 0; $i < count($array); $i += 2) {
             $newArray[] = ($array[$i] + $array[$i + 1]) / 2;
         }
+
         return $newArray;
     }
+
     return $array;
 }
 
@@ -81,15 +83,15 @@ function readAudio($path, int $chunkSize = 2048): array
  *
  * E.g. 0 -> "00:00:00", 376 -> 00:00:03,760, 3536 -> 00:00:35,360
  *
- * @param int $t Input timestamp from Whisper
- * @param string $separator Separator between seconds and milliseconds
+ * @param  int  $t  Input timestamp from Whisper
+ * @param  string  $separator  Separator between seconds and milliseconds
  */
 function toTimestamp(int $t, string $separator = ','): string
 {
-    $milliseconds = (int)($t * 10);
-    $seconds = (int)($milliseconds / 1000);
-    $minutes = (int)($seconds / 60);
-    $hours = (int)($minutes / 60);
+    $milliseconds = (int) ($t * 10);
+    $seconds = (int) ($milliseconds / 1000);
+    $minutes = (int) ($seconds / 60);
+    $hours = (int) ($minutes / 60);
 
     $milliseconds = $milliseconds % 1000;
     $seconds = $seconds % 60;
@@ -108,14 +110,13 @@ function toTimestamp(int $t, string $separator = ','): string
 /**
  * Creates a raw text file from segments
  *
- * @param SegmentData[] $segments Array of segments
- * @param string $outputFilePath Output file path
- *
+ * @param  SegmentData[]  $segments  Array of segments
+ * @param  string  $outputFilePath  Output file path
  * @return string Absolute path of the created file
  */
 function outputTxt(array $segments, string $outputFilePath): string
 {
-    if (!str_ends_with($outputFilePath, '.txt')) {
+    if (! str_ends_with($outputFilePath, '.txt')) {
         $outputFilePath .= '.txt';
     }
 
@@ -129,14 +130,13 @@ function outputTxt(array $segments, string $outputFilePath): string
 /**
  * Creates a VTT file from segments
  *
- * @param SegmentData[] $segments Array of segments
- * @param string $outputFilePath Output file path
- *
+ * @param  SegmentData[]  $segments  Array of segments
+ * @param  string  $outputFilePath  Output file path
  * @return string Absolute path of the created file
  */
 function outputVtt(array $segments, string $outputFilePath): string
 {
-    if (!str_ends_with($outputFilePath, '.vtt')) {
+    if (! str_ends_with($outputFilePath, '.vtt')) {
         $outputFilePath .= '.vtt';
     }
 
@@ -150,7 +150,7 @@ function outputVtt(array $segments, string $outputFilePath): string
         );
     }
 
-    if (!file_exists(dirname($outputFilePath))) {
+    if (! file_exists(dirname($outputFilePath))) {
         mkdir(dirname($outputFilePath), 0755, true);
     }
 
@@ -162,14 +162,13 @@ function outputVtt(array $segments, string $outputFilePath): string
 /**
  * Creates an SRT file from segments
  *
- * @param SegmentData[] $segments Array of segments
- * @param string $outputFilePath Output file path
- *
+ * @param  SegmentData[]  $segments  Array of segments
+ * @param  string  $outputFilePath  Output file path
  * @return string Absolute path of the created file
  */
 function outputSrt(array $segments, string $outputFilePath): string
 {
-    if (!str_ends_with($outputFilePath, '.srt')) {
+    if (! str_ends_with($outputFilePath, '.srt')) {
         $outputFilePath .= '.srt';
     }
 
@@ -185,7 +184,7 @@ function outputSrt(array $segments, string $outputFilePath): string
         );
     }
 
-    if (!file_exists(dirname($outputFilePath))) {
+    if (! file_exists(dirname($outputFilePath))) {
         mkdir(dirname($outputFilePath), 0755, true);
     }
 
@@ -197,18 +196,17 @@ function outputSrt(array $segments, string $outputFilePath): string
 /**
  * Creates a CSV file from segments
  *
- * @param SegmentData $segments Array of segments
- * @param string $outputFilePath Output file path
- *
+ * @param  SegmentData  $segments  Array of segments
+ * @param  string  $outputFilePath  Output file path
  * @return string Absolute path of the created file
  */
 function outputCsv(array $segments, string $outputFilePath): string
 {
-    if (!str_ends_with($outputFilePath, '.csv')) {
+    if (! str_ends_with($outputFilePath, '.csv')) {
         $outputFilePath .= '.csv';
     }
 
-    if (!file_exists(dirname($outputFilePath))) {
+    if (! file_exists(dirname($outputFilePath))) {
         mkdir(dirname($outputFilePath), 0755, true);
     }
 
@@ -218,7 +216,7 @@ function outputCsv(array $segments, string $outputFilePath): string
         fputcsv($handle, [
             $segment->startTimestamp * 10,
             $segment->endTimestamp * 10,
-            $segment->text
+            $segment->text,
         ]);
     }
 
@@ -230,10 +228,9 @@ function outputCsv(array $segments, string $outputFilePath): string
 /**
  * Creates output files in multiple formats at once
  *
- * @param SegmentData[] $segments Array of segments
- * @param string $outputFilePath Base output file path (without extension)
- * @param array $formats Array of formats to output (e.g., ['txt', 'vtt', 'srt', 'csv'])
- *
+ * @param  SegmentData[]  $segments  Array of segments
+ * @param  string  $outputFilePath  Base output file path (without extension)
+ * @param  array  $formats  Array of formats to output (e.g., ['txt', 'vtt', 'srt', 'csv'])
  * @return array<string, string> Array of format => file path pairs
  */
 function outputMultiple(array $segments, string $outputFilePath, array $formats = ['txt', 'vtt', 'srt', 'csv']): array
@@ -244,7 +241,7 @@ function outputMultiple(array $segments, string $outputFilePath, array $formats 
         'txt' => 'outputTxt',
         'vtt' => 'outputVtt',
         'srt' => 'outputSrt',
-        'csv' => 'outputCsv'
+        'csv' => 'outputCsv',
     ];
 
     foreach ($formats as $format) {
@@ -264,14 +261,14 @@ function timeUsage(bool $milliseconds = false, bool $sinceLastCall = true, bool 
     $currentTime = microtime(true);
 
     $timeDiff = $sinceLastCall ? ($lastCallTime !== 0 ? $currentTime - $lastCallTime
-        : $currentTime - $_SERVER["REQUEST_TIME_FLOAT"])
-        : $currentTime - $_SERVER["REQUEST_TIME_FLOAT"];
+        : $currentTime - $_SERVER['REQUEST_TIME_FLOAT'])
+        : $currentTime - $_SERVER['REQUEST_TIME_FLOAT'];
 
     $lastCallTime = $currentTime;
 
     $timeDiff = $milliseconds ? $timeDiff * 1000 : $timeDiff;
 
-//    return @round($timeDiff, 4) . ($milliseconds ? ' ms' : ' s');
+    //    return @round($timeDiff, 4) . ($milliseconds ? ' ms' : ' s');
     return $returnString ? @round($timeDiff, 4).($milliseconds ? ' ms' : ' s') : @round($timeDiff, 4);
 }
 

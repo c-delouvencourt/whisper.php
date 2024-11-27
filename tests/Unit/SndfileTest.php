@@ -6,7 +6,7 @@ use Codewithkyrian\Whisper\Sndfile;
 use FFI\CData;
 
 beforeEach(function () {
-    if (!extension_loaded('ffi')) {
+    if (! extension_loaded('ffi')) {
         $this->markTestSkipped('FFI extension is not loaded.');
     }
 
@@ -30,8 +30,8 @@ it('can create a new instance of any type from the library', function () {
 });
 
 it('can cast a pointer to a different type', function () {
-    $data = Sndfile::new("float[2]");
-    $float = Sndfile::cast("float*", $data);
+    $data = Sndfile::new('float[2]');
+    $float = Sndfile::cast('float*', $data);
     expect($float)->toBeInstanceOf(CData::class);
 });
 
@@ -55,7 +55,7 @@ it('can get the format of a sound file', function () {
 
     $format = Sndfile::getFormat($sndfile, $sfinfo);
 
-    expect($format)->toBe("WAV (Microsoft)");
+    expect($format)->toBe('WAV (Microsoft)');
 
     Sndfile::close($sndfile);
 });
@@ -76,7 +76,6 @@ it('can read frames from a sound file', function () {
 });
 
 it('can write frames to a sound file', function () {
-
 
     $sfinfo = Sndfile::new('SF_INFO');
     $sfinfo->channels = 1;

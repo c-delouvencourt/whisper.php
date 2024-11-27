@@ -26,17 +26,14 @@ jobs:
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v1
 
-#      - name: Run build script
-#        run: |
-#          .\scripts\build.bat cpu ${{ github.workspace }}\whisper.cpp\
-#          cd ${{ github.workspace }}\whisper.cpp\build\bin\Release
-#          ren whisper.dll libwhisper.dll
       - name: Build Windows Native Libraries
         run: |
           cd whisper.cpp
           cmake -S . -B ./build -A x64 -DCMAKE_BUILD_TYPE=Release -DWHISPER_BUILD_TESTS=OFF -DWHISPER_BUILD_EXAMPLES=OFF
           cd ./build
           msbuild ALL_BUILD.vcxproj -t:build -p:configuration=Release -p:platform=x64
+          cd ${{ github.workspace }}\whisper.cpp\build\bin\Release
+          ren whisper.dll libwhisper.dll
 
       - name: Upload Windows Build Artifacts
         uses: actions/upload-artifact@v4

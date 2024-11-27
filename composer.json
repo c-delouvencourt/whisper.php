@@ -11,7 +11,8 @@
   "require-dev": {
     "symfony/var-dumper": "^7.1",
     "pestphp/pest": "^3.5",
-    "mockery/mockery": "^1.6"
+    "mockery/mockery": "^1.6",
+    "laravel/pint": "^1.18"
   },
   "license": "MIT",
   "autoload": {

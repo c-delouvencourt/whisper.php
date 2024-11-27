@@ -34,7 +34,10 @@ jobs:
 
       - name: Run build script
         run: |
-          .\scripts\build.bat cuda ${{ github.workspace }}\whisper.cpp\
+          cd whisper.cpp
+          cmake -S . -B ./build -A x64 -DCMAKE_BUILD_TYPE=Release -DWHISPER_CUBLAS=ON -DWHISPER_BUILD_TESTS=OFF -DWHISPER_BUILD_EXAMPLES=OFF
+          cd ./build
+          msbuild ALL_BUILD.vcxproj -t:build -p:configuration=Release -p:platform=x64
           cd ${{ github.workspace }}\whisper.cpp\build\bin\Release
           ren whisper.dll libwhisper_cuda.dll
 

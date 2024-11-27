@@ -6,8 +6,9 @@ namespace Codewithkyrian\Whisper;
 
 use FFI;
 use RuntimeException;
+use ZipArchive;
 
-class FFILoader
+class LibraryLoader
 {
     private const LIBRARY_CONFIGS = [
         'whisper' => [
@@ -24,7 +25,10 @@ class FFILoader
         ],
     ];
 
+    private const DOWNLOAD_URL = 'https://huggingface.co/codewithkyrian/whisper.php/resolve/main/libs/%s.zip';
+
     private static array $instances = [];
+
     private static ?PlatformDetector $platformDetector = null;
 
     /**
@@ -32,7 +36,7 @@ class FFILoader
      */
     public static function getInstance(string $library): FFI
     {
-        if (!isset(self::$instances[$library])) {
+        if (! isset(self::$instances[$library])) {
             self::$instances[$library] = self::createFFIInstance($library);
         }
 
@@ -44,7 +48,7 @@ class FFILoader
      */
     private static function createFFIInstance(string $library): FFI
     {
-        if (!isset(self::LIBRARY_CONFIGS[$library])) {
+        if (! isset(self::LIBRARY_CONFIGS[$library])) {
             throw new RuntimeException("Unsupported library: {$library}");
         }
 
@@ -58,12 +62,8 @@ class FFILoader
             $detector->getPlatformIdentifier()
         );
 
-        if (!file_exists($headerPath)) {
-            throw new RuntimeException("Header file not found: {$headerPath}");
-        }
-
-        if (!file_exists($libPath)) {
-            throw new RuntimeException("Library file not found: {$libPath}");
+        if (! file_exists($libPath)) {
+            self::downloadLibraries();
         }
 
         return FFI::cdef(
@@ -75,8 +75,9 @@ class FFILoader
     private static function getPlatformDetector(): PlatformDetector
     {
         if (self::$platformDetector === null) {
-            self::$platformDetector = new PlatformDetector();
+            self::$platformDetector = new PlatformDetector;
         }
+
         return self::$platformDetector;
     }
 
@@ -85,12 +86,53 @@ class FFILoader
         return dirname(__DIR__)."/include/{$headerFile}";
     }
 
-    private static function getLibraryPath(
-        string $prefix,
-        string $extension,
-        string $platform
-    ): string
+    private static function getLibraryPath(string $prefix, string $extension, string $platform): string
     {
         return dirname(__DIR__)."/lib/{$platform}/{$prefix}.{$extension}";
+    }
+
+    /**
+     * Download libraries from Hugging Face
+     */
+    private static function downloadLibraries(): void
+    {
+        $detector = self::getPlatformDetector();
+        $platform = $detector->getPlatformIdentifier();
+        $libDir = dirname(__DIR__).'/lib';
+
+        $url = sprintf(self::DOWNLOAD_URL, $platform);
+
+        $tempFile = tempnam(sys_get_temp_dir(), 'whisper-cpp-libs');
+
+        $ch = curl_init();
+        $fp = fopen($tempFile, 'w');
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_FILE, $fp);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_FAILONERROR, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Accept: application/octet-stream',
+        ]);
+
+        if (! curl_exec($ch)) {
+            fclose($fp);
+            unlink($tempFile);
+            throw new \RuntimeException(sprintf('Failed to download libraries from %s: %s', $url, curl_error($ch)));
+        }
+
+        // Extract ZIP file
+        $zip = new ZipArchive;
+        if ($zip->open($tempFile) === true) {
+            $platformLibDir = "{$libDir}/{$platform}";
+            if (! is_dir($platformLibDir)) {
+                mkdir($platformLibDir, 0755, true);
+            }
+            $zip->extractTo($platformLibDir);
+            $zip->close();
+
+            unlink($tempFile);
+        } else {
+            throw new RuntimeException('Failed to downloaded ZIP');
+        }
     }
 }

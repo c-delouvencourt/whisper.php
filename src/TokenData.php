@@ -10,17 +10,18 @@ use FFI\CData;
 /**
  * Represents token data from Whisper's transcription
  */
-class TokenData {
+class TokenData
+{
     public function __construct(
-        public readonly int   $id,      // token id
-        public readonly int   $tid,     // forced timestamp token id
+        public readonly int $id,      // token id
+        public readonly int $tid,     // forced timestamp token id
         public readonly float $p,     // probability of the token
         public readonly float $plog,  // log probability of the token
         public readonly float $pt,    // probability of the timestamp token
         public readonly float $ptsum, // sum of probabilities of all timestamp tokens
-        public readonly int   $startTimestamp,      // start time of the token
-        public readonly int   $endTimestamp,      // end time of the token
-        public readonly int   $dtwTimestamp,    // token timing from DTW
+        public readonly int $startTimestamp,      // start time of the token
+        public readonly int $endTimestamp,      // end time of the token
+        public readonly int $dtwTimestamp,    // token timing from DTW
         public readonly float $voiceLen,  // voice length of the token
     ) {}
 
@@ -48,7 +49,7 @@ class TokenData {
      */
     public function toCStruct(FFI $ffi): CData
     {
-        $struct = $ffi->new("struct whisper_token_data");
+        $struct = $ffi->new('struct whisper_token_data');
 
         $struct->id = $this->id;
         $struct->tid = $this->tid;

@@ -27,6 +27,7 @@ class PlatformDetector
     ];
 
     private string $os;
+
     private string $arch;
 
     public function __construct()
@@ -34,7 +35,7 @@ class PlatformDetector
         $this->os = strtolower(PHP_OS_FAMILY);
         $this->arch = php_uname('m');
 
-        if (!$this->isPlatformSupported()) {
+        if (! $this->isPlatformSupported()) {
             throw new RuntimeException(
                 "Unsupported platform: {$this->os} {$this->arch}"
             );
@@ -49,6 +50,7 @@ class PlatformDetector
     public function getPlatformIdentifier(): string
     {
         $platform = self::SUPPORTED_PLATFORMS[$this->os][$this->arch];
+
         return "{$platform[1]}-{$platform[2]}";
     }
 

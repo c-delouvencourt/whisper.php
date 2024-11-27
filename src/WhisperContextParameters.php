@@ -9,10 +9,10 @@ use FFI;
 class WhisperContextParameters
 {
     public function __construct(
-        protected bool          $useGpu = false,
-        protected bool          $flashAttn = false,
-        protected int           $gpuDevice = 0,
-        protected DtwParameters $dtwParameters = new DtwParameters(),
+        protected bool $useGpu = false,
+        protected bool $flashAttn = false,
+        protected int $gpuDevice = 0,
+        protected DtwParameters $dtwParameters = new DtwParameters,
     ) {}
 
     public function toCStruct(FFI $ffi): mixed
@@ -28,7 +28,7 @@ class WhisperContextParameters
 
         // Set DTW mode-specific parameters
         switch ($this->dtwParameters->mode) {
-            case  DtwMode::None:
+            case DtwMode::None:
                 $params->dtw_aheads_preset = $ffi->WHISPER_AHEADS_NONE;
                 $params->dtw_n_top = -1;
                 break;
@@ -62,30 +62,34 @@ class WhisperContextParameters
 
     public static function default(): self
     {
-        return new self();
+        return new self;
     }
 
     public function useGpu(bool $use = true): static
     {
         $this->useGpu = $use;
+
         return $this;
     }
 
     public function withFlashAttn(bool $use = true): static
     {
         $this->flashAttn = $use;
+
         return $this;
     }
 
     public function withGpuDevice(int $device): static
     {
         $this->gpuDevice = $device;
+
         return $this;
     }
 
     public function withDtwParameters(DtwParameters $parameters): static
     {
         $this->dtwParameters = $parameters;
+
         return $this;
     }
 }

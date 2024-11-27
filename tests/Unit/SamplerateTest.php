@@ -6,7 +6,7 @@ use Codewithkyrian\Whisper\Samplerate;
 use FFI\CData;
 
 beforeEach(function () {
-    if (!extension_loaded('ffi')) {
+    if (! extension_loaded('ffi')) {
         $this->markTestSkipped('FFI extension is not loaded.');
     }
 });
@@ -27,7 +27,7 @@ it('can create a new instance of any type from the library', function () {
 });
 
 it('can cast a pointer to a different type', function () {
-    $data = Samplerate::new("float[2]");
+    $data = Samplerate::new('float[2]');
     $castedInstance = Samplerate::cast('float *', $data);
     expect($castedInstance)->toBeInstanceOf(CData::class);
 });

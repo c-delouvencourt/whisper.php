@@ -34,5 +34,4 @@ enum DtwModelPreset
             self::LargeV3 => $ffi->WHISPER_AHEADS_LARGE_V3,
         };
     }
-
 }

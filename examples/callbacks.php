@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 use Codewithkyrian\Whisper\SegmentData;
-use Codewithkyrian\Whisper\Whisper;
 use Codewithkyrian\Whisper\WhisperContext;
 use Codewithkyrian\Whisper\WhisperContextParameters;
 use Codewithkyrian\Whisper\WhisperException;
 use Codewithkyrian\Whisper\WhisperFullParams;
+
 use function Codewithkyrian\Whisper\readAudio;
 use function Codewithkyrian\Whisper\toTimestamp;
 

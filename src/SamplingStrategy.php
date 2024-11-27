@@ -7,12 +7,14 @@ namespace Codewithkyrian\Whisper;
 class SamplingStrategy
 {
     const GREEDY = 0;
+
     const BEAM_SEARCH = 1;
 
     public int $bestOf;
-    public int $beamSize;
-    public float $patience;
 
+    public int $beamSize;
+
+    public float $patience;
 
     public function __construct(public int $type = self::GREEDY) {}
 
@@ -20,6 +22,7 @@ class SamplingStrategy
     {
         $strategy = new self(self::GREEDY);
         $strategy->bestOf = $bestOf;
+
         return $strategy;
     }
 
@@ -28,6 +31,7 @@ class SamplingStrategy
         $strategy = new self(self::BEAM_SEARCH);
         $strategy->beamSize = $beamSize;
         $strategy->patience = $patience;
+
         return $strategy;
     }
 }

@@ -10,47 +10,84 @@ use FFI\CData;
 class WhisperFullParams
 {
     protected SamplingStrategy $strategy;
+
     protected int $nThreads = 4;
+
     public int $nMaxTextCtx = 16384;
+
     public int $offsetMs = 0;
+
     public int $durationMs = 0;
+
     public bool $translate = false;
+
     public bool $noContext = false;
+
     public bool $noTimestamps = false;
+
     public bool $singleSegment = false;
+
     public bool $printSpecial = false;
+
     public bool $printProgress = false;
+
     public bool $printRealtime = false;
+
     public bool $printTimestamps = false;
+
     public bool $tokenTimestamps = false;
+
     public float $tholdPt = 0.01;
+
     public float $tholdPtsum = 0.01;
+
     public int $maxLen = 0;
+
     public bool $splitOnWord = false;
+
     public int $maxTokens = 0;
+
     public bool $debug = false;
+
     public int $audioCtx = 0;
+
     public bool $tdrzEnable = false;
+
     public bool $detectLanguage = false;
+
     public bool $suppressBlank = false;
+
     public bool $suppressNonSpeechTokens = false;
+
     public float $temperature = 0.0;
+
     public float $maxInitialTs = 1.0;
+
     public float $lengthPenalty = -1.0;
+
     public float $temperatureInc = 0.2;
+
     public float $entropyThold = 2.4;
+
     public float $logprobThold = -1.0;
+
     public float $noSpeechThold = 0.6;
+
     public float $grammarPenalty = 100.0;
 
     private mixed $progressCallback = null;
+
     private mixed $segmentCallback = null;
+
     /**
      * @var WhisperGrammarElement[]|null
      */
     private ?array $grammar = null;
+
     private ?string $language = null;
+
     private ?string $initialPrompt = null;
+
     private ?array $tokens = null;
 
     public function __construct(SamplingStrategy $strategy)
@@ -68,154 +105,179 @@ class WhisperFullParams
     public function withNThreads(int $nThreads): static
     {
         $this->nThreads = $nThreads;
+
         return $this;
     }
 
     public function withNMaxTextCtx(int $nMaxTextCtx): static
     {
         $this->nMaxTextCtx = $nMaxTextCtx;
+
         return $this;
     }
 
     public function withOffsetMs(int $offsetMs): static
     {
         $this->offsetMs = $offsetMs;
+
         return $this;
     }
 
     public function withDurationMs(int $durationMs): static
     {
         $this->durationMs = $durationMs;
+
         return $this;
     }
 
     public function withTranslate(bool $translate = true): static
     {
         $this->translate = $translate;
+
         return $this;
     }
 
     public function withNoContext(bool $noContext = true): static
     {
         $this->noContext = $noContext;
+
         return $this;
     }
 
     public function withNoTimestamps(bool $noTimestamps = true): static
     {
         $this->noTimestamps = $noTimestamps;
+
         return $this;
     }
 
     public function withSingleSegment(bool $singleSegment = true): static
     {
         $this->singleSegment = $singleSegment;
+
         return $this;
     }
 
     public function withPrintSpecial(bool $printSpecial = true): static
     {
         $this->printSpecial = $printSpecial;
+
         return $this;
     }
 
     public function withPrintProgress(bool $printProgress = true): static
     {
         $this->printProgress = $printProgress;
+
         return $this;
     }
 
     public function withPrintRealtime(bool $printRealtime = true): static
     {
         $this->printRealtime = $printRealtime;
+
         return $this;
     }
 
     public function withPrintTimestamps(bool $printTimestamps = true): static
     {
         $this->printTimestamps = $printTimestamps;
+
         return $this;
     }
 
     public function withTokenTimestamps(bool $tokenTimestamps = true): static
     {
         $this->tokenTimestamps = $tokenTimestamps;
+
         return $this;
     }
 
     public function withTholdPt(float $tholdPt): static
     {
         $this->tholdPt = $tholdPt;
+
         return $this;
     }
 
     public function withTholdPtsum(float $tholdPtsum): static
     {
         $this->tholdPtsum = $tholdPtsum;
+
         return $this;
     }
 
     public function withMaxLen(int $maxLen): static
     {
         $this->maxLen = $maxLen;
+
         return $this;
     }
 
     public function withSplitOnWord(bool $splitOnWord): static
     {
         $this->splitOnWord = $splitOnWord;
+
         return $this;
     }
 
     public function withMaxTokens(int $maxTokens): static
     {
         $this->maxTokens = $maxTokens;
+
         return $this;
     }
 
     public function withTemperature(float $temperature): static
     {
         $this->temperature = $temperature;
+
         return $this;
     }
 
     public function withLengthPenalty(float $lengthPenalty): static
     {
         $this->lengthPenalty = $lengthPenalty;
+
         return $this;
     }
 
     public function withTemperatureInc(float $temperatureInc): static
     {
         $this->temperatureInc = $temperatureInc;
+
         return $this;
     }
 
     public function withLogitsInc(float $logitsInc): static
     {
         $this->logitsInc = $logitsInc;
+
         return $this;
     }
 
     public function withEntropyThold(float $entropyThold): static
     {
         $this->entropyThold = $entropyThold;
+
         return $this;
     }
 
     public function withLogprobThold(float $logprobThold): static
     {
         $this->logprobThold = $logprobThold;
+
         return $this;
     }
 
     public function withNoSpeechThold(float $noSpeechThold): static
     {
         $this->noSpeechThold = $noSpeechThold;
+
         return $this;
     }
 
-    public function toCStruct( $ffi): ?CData
+    public function toCStruct($ffi): ?CData
     {
         $params = $ffi->new('struct whisper_full_params');
 
@@ -263,7 +325,7 @@ class WhisperFullParams
             $len = strlen($this->language) + 1;
             $language = $ffi->new("char[$len]");
             FFI::memcpy($language, $this->language, strlen($this->language));
-            $params->language = $ffi->cast("char *", $language);
+            $params->language = $ffi->cast('char *', $language);
         }
 
         // Set initial prompt if specified
@@ -271,7 +333,7 @@ class WhisperFullParams
             $len = strlen($this->initialPrompt) + 1;
             $initialPrompt = $ffi->new("char[$len]");
             FFI::memcpy($initialPrompt, $this->initialPrompt, strlen($this->initialPrompt));
-            $params->initial_prompt = $ffi->cast("char *", $initialPrompt);
+            $params->initial_prompt = $ffi->cast('char *', $initialPrompt);
         }
 
         // Set tokens if specified
@@ -281,7 +343,7 @@ class WhisperFullParams
             foreach ($this->tokens as $i => $token) {
                 $tokenArray[$i] = $token;
             }
-            $params->prompt_tokens = $ffi->cast("whisper_token *", $tokenArray);
+            $params->prompt_tokens = $ffi->cast('whisper_token *', $tokenArray);
             $params->prompt_n_tokens = $tokenCount;
         }
 
@@ -292,7 +354,7 @@ class WhisperFullParams
             foreach ($this->grammar as $i => $element) {
                 $grammarArray[$i] = $element->toCStruct($ffi);
             }
-            $params->grammar_rules = $ffi->cast("whisper_grammar_element**", $grammarArray);
+            $params->grammar_rules = $ffi->cast('whisper_grammar_element**', $grammarArray);
             $params->n_grammar_rules = $grammarCount;
             $params->grammar_penalty = $this->grammarPenalty;
         }
@@ -331,35 +393,40 @@ class WhisperFullParams
     public function withLanguage(?string $language): self
     {
         $this->language = $language;
+
         return $this;
     }
 
     public function withInitialPrompt(string $prompt): self
     {
         $this->initialPrompt = $prompt;
+
         return $this;
     }
 
     public function withTokens(array $tokens): self
     {
         $this->tokens = $tokens;
+
         return $this;
     }
 
     /**
      * Enable an array of grammar elements to be passed to the whisper model.
      *
-     * @param WhisperGrammarElement[] $grammar
+     * @param  WhisperGrammarElement[]  $grammar
      */
     public function withGrammar(array $grammar): self
     {
         $this->grammar = $grammar;
+
         return $this;
     }
 
     public function withGrammarPenalty(float $penalty): self
     {
         $this->grammarPenalty = $penalty;
+
         return $this;
     }
 
@@ -369,6 +436,7 @@ class WhisperFullParams
     public function withProgressCallback(callable $callback): self
     {
         $this->progressCallback = $callback;
+
         return $this;
     }
 

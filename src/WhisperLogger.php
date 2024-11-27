@@ -15,27 +15,40 @@ class WhisperLogger implements LoggerInterface
     use LoggerTrait;
 
     protected const LOG_FORMAT = "[%datetime%] whisper.%level_name%: %message% %context%\n";
-    protected const DATE_FORMAT = "Y-m-d H:i:s";
+
+    protected const DATE_FORMAT = 'Y-m-d H:i:s';
+
     protected const MAX_CHUNK_SIZE = 2147483647;
+
     protected const DEFAULT_CHUNK_SIZE = 10 * 1024 * 1024; // 10MB
+
     private LogLevel $minimumLevel;
+
     protected int $streamChunkSize;
+
     /** @var ?resource */
     protected $stream;
-    protected string|null $url = null;
-    private string|null $errorMessage = null;
-    protected int|null $filePermission;
+
+    protected ?string $url = null;
+
+    private ?string $errorMessage = null;
+
+    protected ?int $filePermission;
+
     protected bool $useLocking;
+
     protected string $fileOpenMode;
+
     /** @var true|null */
-    private bool|null $dirCreated = null;
+    private ?bool $dirCreated = null;
+
     private bool $retrying = false;
 
     /**
-     * @param resource|string $stream If a missing path can't be created, an UnexpectedValueException will be thrown on first write
-     * @param int|null $filePermission Optional file permissions (default (0644) are only for owner read/write)
-     * @param bool $useLocking Try to lock log file before doing any writes
-     * @param string $fileOpenMode The fopen() mode used when opening a file, if $stream is a file path
+     * @param  resource|string  $stream  If a missing path can't be created, an UnexpectedValueException will be thrown on first write
+     * @param  int|null  $filePermission  Optional file permissions (default (0644) are only for owner read/write)
+     * @param  bool  $useLocking  Try to lock log file before doing any writes
+     * @param  string  $fileOpenMode  The fopen() mode used when opening a file, if $stream is a file path
      *
      * @throws \InvalidArgumentException If stream is not a resource or string
      */
@@ -46,7 +59,7 @@ class WhisperLogger implements LoggerInterface
         if (($phpMemoryLimit = self::getMemoryLimitInBytes()) !== false) {
             if ($phpMemoryLimit > 0) {
                 // use max 10% of allowed memory for the chunk size, and at least 100KB
-                $this->streamChunkSize = min(static::MAX_CHUNK_SIZE, max((int)($phpMemoryLimit / 10), 100 * 1024));
+                $this->streamChunkSize = min(static::MAX_CHUNK_SIZE, max((int) ($phpMemoryLimit / 10), 100 * 1024));
             } else {
                 // memory is unlimited, set to the default 10MB
                 $this->streamChunkSize = static::DEFAULT_CHUNK_SIZE;
@@ -79,9 +92,9 @@ class WhisperLogger implements LoggerInterface
             return;
         }
 
-        if (!\is_resource($this->stream)) {
+        if (! \is_resource($this->stream)) {
             $url = $this->url;
-            if (null === $url || '' === $url) {
+            if ($url === null || $url === '') {
                 throw new \LogicException('Missing stream url, the stream can not be opened. This may be caused by a premature call to close()');
             }
             $this->createDir($url);
@@ -96,7 +109,7 @@ class WhisperLogger implements LoggerInterface
             } finally {
                 restore_error_handler();
             }
-            if (!\is_resource($stream)) {
+            if (! \is_resource($stream)) {
                 $this->stream = null;
 
                 throw new \UnexpectedValueException('The stream could not be opened in append mode');
@@ -133,7 +146,7 @@ class WhisperLogger implements LoggerInterface
         if ($this->errorMessage !== null) {
             $error = $this->errorMessage;
             // close the resource if possible to reopen it, and retry the failed write
-            if (!$this->retrying && $this->url !== null && $this->url !== 'php://memory') {
+            if (! $this->retrying && $this->url !== null && $this->url !== 'php://memory') {
                 $this->retrying = true;
                 $this->close();
                 $this->log($level, $message, $context);
@@ -152,7 +165,7 @@ class WhisperLogger implements LoggerInterface
 
     public function close(): void
     {
-        if (null !== $this->url && \is_resource($this->stream)) {
+        if ($this->url !== null && \is_resource($this->stream)) {
             fclose($this->stream);
         }
         $this->stream = null;
@@ -183,19 +196,19 @@ class WhisperLogger implements LoggerInterface
     private function createDir(string $url): void
     {
         // Do not try to create dir if it has already been tried.
-        if (true === $this->dirCreated) {
+        if ($this->dirCreated === true) {
             return;
         }
 
         $dir = $this->getDirFromStream($url);
-        if (null !== $dir && !is_dir($dir)) {
+        if ($dir !== null && ! is_dir($dir)) {
             $this->errorMessage = null;
             set_error_handler(function (...$args) {
                 return $this->customErrorHandler(...$args);
             });
             $status = mkdir($dir, 0777, true);
             restore_error_handler();
-            if (false === $status && !is_dir($dir) && !str_contains((string)$this->errorMessage, 'File exists')) {
+            if ($status === false && ! is_dir($dir) && ! str_contains((string) $this->errorMessage, 'File exists')) {
                 throw new \UnexpectedValueException(sprintf('There is no existing directory at "%s" and it could not be created: '.$this->errorMessage, $dir));
             }
         }
@@ -205,27 +218,27 @@ class WhisperLogger implements LoggerInterface
     protected static function getMemoryLimitInBytes(): false|int
     {
         $limit = \ini_get('memory_limit');
-        if (!\is_string($limit)) {
+        if (! \is_string($limit)) {
             return false;
         }
 
         // support -1
-        if ((int)$limit < 0) {
-            return (int)$limit;
+        if ((int) $limit < 0) {
+            return (int) $limit;
         }
 
-        if (!(bool)preg_match('/^\s*(?<limit>\d+)(?:\.\d+)?\s*(?<unit>[gmk]?)\s*$/i', $limit, $match)) {
+        if (! (bool) preg_match('/^\s*(?<limit>\d+)(?:\.\d+)?\s*(?<unit>[gmk]?)\s*$/i', $limit, $match)) {
             return false;
         }
 
-        $limit = (int)$match['limit'];
+        $limit = (int) $match['limit'];
         switch (strtolower($match['unit'])) {
             case 'g':
                 $limit *= 1024;
-            // no break
+                // no break
             case 'm':
                 $limit *= 1024;
-            // no break
+                // no break
             case 'k':
                 $limit *= 1024;
         }
@@ -236,7 +249,7 @@ class WhisperLogger implements LoggerInterface
     /**
      * Makes sure if a relative path is passed in it is turned into an absolute path
      *
-     * @param string $streamUrl stream URL or path without protocol
+     * @param  string  $streamUrl  stream URL or path without protocol
      */
     public static function canonicalizePath(string $streamUrl): string
     {

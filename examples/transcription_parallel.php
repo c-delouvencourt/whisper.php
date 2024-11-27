@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
+use Codewithkyrian\Whisper\ModelLoader;
 use Codewithkyrian\Whisper\SegmentData;
-use Codewithkyrian\Whisper\Whisper;
 use Codewithkyrian\Whisper\WhisperContext;
 use Codewithkyrian\Whisper\WhisperContextParameters;
 use Codewithkyrian\Whisper\WhisperException;
 use Codewithkyrian\Whisper\WhisperFullParams;
+
 use function Codewithkyrian\Whisper\outputSrt;
 use function Codewithkyrian\Whisper\readAudio;
 use function Codewithkyrian\Whisper\toTimestamp;
@@ -16,7 +17,7 @@ require_once __DIR__.'/../vendor/autoload.php';
 
 ini_set('memory_limit', -1);
 
-$modelPath = Whisper::downloadModel('tiny.en');
+$modelPath = ModelLoader::loadModel('tiny.en');
 $audioPath = __DIR__.'/sounds/jfk.wav';
 
 try {

@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 use Codewithkyrian\Whisper\DtwMode;
 use Codewithkyrian\Whisper\DtwParameters;
-use Codewithkyrian\Whisper\FFILoader;
+use Codewithkyrian\Whisper\LibraryLoader;
 use Codewithkyrian\Whisper\WhisperContextParameters;
 
 beforeEach(function () {
-    $this->ffi = FFILoader::getInstance('whisper');
+    $this->ffi = LibraryLoader::getInstance('whisper');
 });
-
 
 it('correctly converts default parameters to C structure', function () {
     $params = WhisperContextParameters::default();
@@ -33,7 +32,7 @@ it('sets parameters for DtwMode::TopMost correctly', function () {
         dtwMemSize: 1024
     );
 
-    $params = (new WhisperContextParameters())->withDtwParameters($dtwParameters);
+    $params = (new WhisperContextParameters)->withDtwParameters($dtwParameters);
 
     $cStruct = $params->toCStruct($this->ffi);
 
@@ -55,7 +54,7 @@ it('sets parameters for DtwMode::Custom correctly', function () {
         dtwMemSize: 512
     );
 
-    $params = (new WhisperContextParameters())->withDtwParameters($dtwParameters);
+    $params = (new WhisperContextParameters)->withDtwParameters($dtwParameters);
 
     $cStruct = $params->toCStruct($this->ffi);
 
@@ -65,9 +64,9 @@ it('sets parameters for DtwMode::Custom correctly', function () {
     expect($cStruct->dtw_aheads->n_heads)->toBe(count($aheads));
 
     // Verify individual heads
-//    $heads = $cStruct->dtw_aheads->heads;
-//    expect($heads[0]->n_text_layer)->toBe(3);
-//    expect($heads[0]->n_text_head)->toBe(2);
-//    expect($heads[1]->n_text_layer)->toBe(4);
-//    expect($heads[1]->n_text_head)->toBe(1);
+    //    $heads = $cStruct->dtw_aheads->heads;
+    //    expect($heads[0]->n_text_layer)->toBe(3);
+    //    expect($heads[0]->n_text_head)->toBe(2);
+    //    expect($heads[1]->n_text_layer)->toBe(4);
+    //    expect($heads[1]->n_text_head)->toBe(1);
 });

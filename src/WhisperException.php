@@ -20,6 +20,7 @@ class WhisperException extends \Exception
         if ($errorLen !== null) {
             $message .= ", Length: {$errorLen}";
         }
+
         return new self($message);
     }
 
@@ -35,32 +36,32 @@ class WhisperException extends \Exception
 
     public static function failedToCreateContext(): self
     {
-        return new self("Failed to create a new whisper context.");
+        return new self('Failed to create a new whisper context.');
     }
 
     public static function failedToCreateState(): self
     {
-        return new self("Creating a state pointer failed.");
+        return new self('Creating a state pointer failed.');
     }
 
     public static function invalidMelBands(): self
     {
-        return new self("Invalid number of mel bands.");
+        return new self('Invalid number of mel bands.');
     }
 
     public static function invalidThreadCount(): self
     {
-        return new self("Invalid thread count.");
+        return new self('Invalid thread count.');
     }
 
     public static function invalidText(): self
     {
-        return new self("Whisper failed to convert the provided text into tokens.");
+        return new self('Whisper failed to convert the provided text into tokens.');
     }
 
     public static function noSamples(): self
     {
-        return new self("Input sample buffer was empty.");
+        return new self('Input sample buffer was empty.');
     }
 
     public static function inputOutputLengthMismatch(int $inputLen, int $outputLen): self
@@ -79,27 +80,27 @@ class WhisperException extends \Exception
 
     public static function failedToCalculateSpectrogram(): self
     {
-        return new self("Failed to calculate the spectrogram for some reason.");
+        return new self('Failed to calculate the spectrogram for some reason.');
     }
 
     public static function failedToCalculateEvaluation(): self
     {
-        return new self("Failed to evaluate model.");
+        return new self('Failed to evaluate model.');
     }
 
     public static function failedToEncode(): self
     {
-        return new self("Failed to run the encoder.");
+        return new self('Failed to run the encoder.');
     }
 
     public static function failedToDecode(): self
     {
-        return new self("Failed to run the decoder.");
+        return new self('Failed to run the decoder.');
     }
 
     public static function failedToAutoDetectLanguage(): self
     {
-        return new self("Failed to auto detect language.");
+        return new self('Failed to auto detect language.');
     }
 
     public static function audioCtxLongerThanMax(int $audioLen, int $maxLen): self
@@ -116,12 +117,12 @@ class WhisperException extends \Exception
 
     public static function encodeNotComplete(): self
     {
-        return new self("Encode was not called.");
+        return new self('Encode was not called.');
     }
 
     public static function decodeNotComplete(): self
     {
-        return new self("Decode was not called.");
+        return new self('Decode was not called.');
     }
 
     public static function offsetBeforeAudioStart(int $offset): self
@@ -136,7 +137,7 @@ class WhisperException extends \Exception
 
     public static function nullPointer(): self
     {
-        return new self("Whisper returned a null pointer.");
+        return new self('Whisper returned a null pointer.');
     }
 
     public static function genericError(int $code): self

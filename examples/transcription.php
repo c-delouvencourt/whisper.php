@@ -2,21 +2,20 @@
 
 declare(strict_types=1);
 
+use Codewithkyrian\Whisper\ModelLoader;
 use Codewithkyrian\Whisper\SegmentData;
-use Codewithkyrian\Whisper\Whisper;
 use Codewithkyrian\Whisper\WhisperContext;
 use Codewithkyrian\Whisper\WhisperContextParameters;
 use Codewithkyrian\Whisper\WhisperException;
 use Codewithkyrian\Whisper\WhisperFullParams;
+
 use function Codewithkyrian\Whisper\outputSrt;
 use function Codewithkyrian\Whisper\readAudio;
 use function Codewithkyrian\Whisper\toTimestamp;
 
 require_once __DIR__.'/../vendor/autoload.php';
 
-ini_set('memory_limit', -1);
-
-$modelPath = Whisper::downloadModel('tiny.en', __DIR__.'/models');
+$modelPath = ModelLoader::loadModel('tiny', __DIR__.'/models');
 $audioPath = __DIR__.'/sounds/jfk.wav';
 
 try {
@@ -27,7 +26,7 @@ try {
     $fullParams = WhisperFullParams::default()
         ->withNThreads(1)
         ->withPrintTimestamps()
-        ->withLanguage("en")
+        ->withLanguage('en')
         ->withTokenTimestamps();
 
     $audio = readAudio($audioPath);
@@ -41,7 +40,6 @@ try {
         $startTimestamp = $state->getSegmentStartTime($i);
         $endTimestamp = $state->getSegmentEndTime($i);
 
-        // Print to console
         printf(
             "[%s - %s]: %s\n",
             toTimestamp($startTimestamp),
@@ -55,7 +53,6 @@ try {
     // Create output files
     $transcriptionPath = __DIR__.'/outputs/transcription.srt';
     outputSrt($segments, $transcriptionPath);
-    dd(\Codewithkyrian\Whisper\timeUsage());
 } catch (WhisperException $e) {
     fprintf(STDERR, "Whisper error: %s\n", $e->getMessage());
     exit(1);

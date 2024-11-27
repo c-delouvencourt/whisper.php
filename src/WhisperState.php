@@ -9,7 +9,7 @@ use FFI;
 class WhisperState
 {
     public function __construct(
-        private FFI   $ffi,
+        private FFI $ffi,
         private mixed $ctx,
         private mixed $state
     ) {}
@@ -19,10 +19,8 @@ class WhisperState
      * Uses the specified decoding strategy to obtain the text.
      *
      *
-     * @param float[] $pcm Raw PCM audio data, 32 bit floating point at a sample rate of 16 kHz, 1 channel. @see Utils::readAudio for a helper.
-     * @param WhisperFullParams $params The parameters to use.
-     *
-     * @return void
+     * @param  float[]  $pcm  Raw PCM audio data, 32 bit floating point at a sample rate of 16 kHz, 1 channel. @see Utils::readAudio for a helper.
+     * @param  WhisperFullParams  $params  The parameters to use.
      */
     public function full(array $pcm, WhisperFullParams $params): void
     {
@@ -63,15 +61,15 @@ class WhisperState
      *
      * The resulting spectrogram is stored in the context transparently.
      *
-     * @param float[] $pcm The raw PCM audio.
-     * @param int $nThreads How many threads to use. Defaults to 1. Must be at least 1, returns an error otherwise.
+     * @param  float[]  $pcm  The raw PCM audio.
+     * @param  int  $nThreads  How many threads to use. Defaults to 1. Must be at least 1, returns an error otherwise.
      *
      * @throws WhisperException
      */
     public function pcmToMel(array $pcm, int $nThreads): void
     {
         if ($nThreads < 1) {
-            throw  WhisperException::invalidThreadCount();
+            throw WhisperException::invalidThreadCount();
         }
 
         $pcmSize = count($pcm);
@@ -104,7 +102,7 @@ class WhisperState
      * If you're a typical user, you probably don't want to use this function.
      * See instead WhisperState::pcmToMel().
      *
-     * @param float[] $data The log mel spectrogram
+     * @param  float[]  $data  The log mel spectrogram
      *
      * @throws WhisperException
      */
@@ -139,8 +137,8 @@ class WhisperState
      * Run the Whisper encoder on the log mel spectrogram stored inside the provided whisper state.
      * Make sure to call WhisperState::pcmToMel() or WhisperState::setMel() first.
      *
-     * @param int $offset Can be used to specify the offset of the first frame in the spectrogram. Usually 0.
-     * @param int $nThreads How many threads to use. Defaults to 1. Must be at least 1.
+     * @param  int  $offset  Can be used to specify the offset of the first frame in the spectrogram. Usually 0.
+     * @param  int  $nThreads  How many threads to use. Defaults to 1. Must be at least 1.
      *
      * @throws WhisperException
      */
@@ -169,9 +167,9 @@ class WhisperState
      * Make sure to call WhisperState::encode() first.
      * tokens + n_tokens is the provided context for the decoder.
      *
-     * @param int[] $tokens The tokens to decode
-     * @param int $nPast The number of past tokens to use for the decoding
-     * @param int $nThreads How many threads to use. Must be at least 1.
+     * @param  int[]  $tokens  The tokens to decode
+     * @param  int  $nPast  The number of past tokens to use for the decoding
+     * @param  int  $nThreads  How many threads to use. Must be at least 1.
      *
      * @throws WhisperException
      */
@@ -208,10 +206,10 @@ class WhisperState
      * Use mel data at offset_ms to try and auto-detect the spoken language
      * Make sure to call pcmToMel() or setMel() first
      *
-     * @param int $offsetMs The offset in milliseconds to use for the language detection
-     * @param int $nThreads How many threads to use. Must be at least 1.
-     *
+     * @param  int  $offsetMs  The offset in milliseconds to use for the language detection
+     * @param  int  $nThreads  How many threads to use. Must be at least 1.
      * @return array{top_lang_id: int, lang_probs: float[]} Tuple of [detected language id, array of probabilities]
+     *
      * @throws WhisperException
      */
     public function langDetect(int $offsetMs, int $nThreads): array
@@ -222,7 +220,7 @@ class WhisperState
 
         // Get max language ID and create probabilities array
         $maxLangId = $this->langMaxId();
-        $langProbs = $this->ffi->new("float[".($maxLangId + 1)."]");
+        $langProbs = $this->ffi->new('float['.($maxLangId + 1).']');
 
         $ret = $this->ffi->whisper_lang_auto_detect_with_state(
             $this->ctx,
@@ -257,6 +255,7 @@ class WhisperState
      * corresponding to the last token in the input.
      *
      * @return float[] Array of logits with length equal to n_vocab
+     *
      * @throws WhisperException
      */
     public function getLogits(): array
@@ -302,7 +301,6 @@ class WhisperState
         return $this->ffi->whisper_lang_max_id();
     }
 
-
     /**
      * Number of generated text segments.
      *
@@ -316,7 +314,7 @@ class WhisperState
     /**
      * Get the text of the segment at the specified index.
      *
-     * @param int $index Segment index.
+     * @param  int  $index  Segment index.
      */
     public function getSegmentText(int $index): string
     {
@@ -326,7 +324,7 @@ class WhisperState
     /**
      * Get the start time of the segment at the specified index.
      *
-     * @param int $index Segment index.
+     * @param  int  $index  Segment index.
      */
     public function getSegmentStartTime(int $index): int
     {
@@ -336,7 +334,7 @@ class WhisperState
     /**
      * Get the end time of the segment at the specified index.
      *
-     * @param int $index Segment index.
+     * @param  int  $index  Segment index.
      */
     public function getSegmentEndTime(int $index): int
     {
@@ -346,7 +344,7 @@ class WhisperState
     /**
      * Get number of tokens in the specified segment.
      *
-     * @param int $index Segment index.
+     * @param  int  $index  Segment index.
      */
     public function nTokens(int $index): int
     {
@@ -356,8 +354,8 @@ class WhisperState
     /**
      * Get the token text of the specified token in the specified segment.
      *
-     * @param int $index Segment index.
-     * @param int $token Token index.
+     * @param  int  $index  Segment index.
+     * @param  int  $token  Token index.
      */
     public function tokenText(int $index, int $token): string
     {
@@ -372,14 +370,15 @@ class WhisperState
     public function tokenData(int $index, int $token): ?TokenData
     {
         $data = $this->ffi->whisper_full_get_token_data_from_state($this->state, $index, $token);
+
         return TokenData::fromCStruct($data);
     }
 
     /**
      * Get the token ID of the specified token in the specified segment.
      *
-     * @param int $index Segment index.
-     * @param int $token Token index.
+     * @param  int  $index  Segment index.
+     * @param  int  $token  Token index.
      */
     public function tokenId(int $index, int $token): int
     {
@@ -389,10 +388,8 @@ class WhisperState
     /**
      * Get the probability of the specified token in the specified segment.
      *
-     * @param int $index Segment index.
-     * @param int $token Token index.
-     *
-     * @return float
+     * @param  int  $index  Segment index.
+     * @param  int  $token  Token index.
      */
     public function tokenProb(int $index, int $token): float
     {
