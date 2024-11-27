@@ -21,6 +21,7 @@ NO_AVX_FLAGS := -DGGML_AVX=OFF -DGGML_AVX2=OFF -DGGML_FMA=OFF -DGGML_F16C=OFF
 # Common CMake parameters
 CMAKE_COMMON_PARAMS := -DCMAKE_BUILD_TYPE=$(BUILD_TYPE)
 
+
 # Linux base build template
 define linux_build
 	$(eval ARCH := $(1))
@@ -48,13 +49,20 @@ define macos_build
 endef
 
 define windows_build
+	VSWHERE := $(shell where vswhere.exe)
+	MSBUILD := $(shell \
+		$(VSWHERE) -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe | sort -r | head -n 1 \
+	)
+	ifeq ($(MSBUILD),)
+		$(error MSBuild not found. Please ensure Visual Studio or Build Tools are installed.)
+	endif
 	$(eval ARCH := $(1))
 	$(eval BUILD_PATH := $(BUILD_DIR)/windows-$(ARCH)$(2))
 	$(eval EXTRA_FLAGS := $(3))
 	rm -rf "$(BUILD_PATH)"
 	mkdir -p "$(BUILD_PATH)"
 	$(CMAKE) -S $(WHISPER_CPP_DIR) -B $(BUILD_PATH) -A $(ARCH) $(CMAKE_COMMON_PARAMS) $(EXTRA_FLAGS)
-	cd "$(BUILD_PATH)" && msbuild ALL_BUILD.vcxproj -t:build -p:configuration=Release -p:platform=x64
+	cd "$(BUILD_PATH)" && "$(MSBUILD)" ALL_BUILD.vcxproj -t:build -p:configuration=Release -p:platform=x64
 	mkdir -p "$(RUNTIME_DIR)/windows-$(TARGET)"
 	cp "$(BUILD_PATH)/src/Release/whisper.dll" "$(RUNTIME_DIR)/windows-$(TARGET)/"
 	cp "$(BUILD_PATH)/ggml/src/Release/ggml.dll" "$(RUNTIME_DIR)/windows-$(TARGET)/"
