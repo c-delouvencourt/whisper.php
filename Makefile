@@ -49,13 +49,12 @@ define macos_build
 endef
 
 define windows_build
-	VSWHERE := $(shell where vswhere.exe)
-	MSBUILD := $(shell \
-		$(VSWHERE) -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe | sort -r | head -n 1 \
-	)
-	ifeq ($(MSBUILD),)
-		$(error MSBuild not found. Please ensure Visual Studio or Build Tools are installed.)
+	VSWHERE := "C:\ProgramData\Chocolatey\bin\vswhere.exe"
+	VS_PATH := $(shell $(VSWHERE) -products * -requires Microsoft.Component.MSBuild -property installationPath -latest)
+	ifeq ($(VS_PATH),)
+		$(error Could not find Visual Studio installation)
 	endif
+	MSBUILD := "$(VS_PATH)\MSBuild\Current\Bin\MSBuild.exe"
 	$(eval ARCH := $(1))
 	$(eval BUILD_PATH := $(BUILD_DIR)/windows-$(ARCH)$(2))
 	$(eval EXTRA_FLAGS := $(3))
