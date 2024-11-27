@@ -1,0 +1,74 @@
+name: Build Whisper.cpp
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Whisper.cpp tag, branch or commit to build'
+        default: v1.7.2
+
+  workflow_call:
+
+jobs:
+#  build-windows:
+#    name: Build for Windows (x86_64)
+#    runs-on: windows-latest
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v4
+#
+#      - name: Checkout whisper.cpp
+#        uses: actions/checkout@v4
+#        with:
+#          repository: ggerganov/whisper.cpp
+#          ref: ${{ github.event.inputs.version }}
+#          path: whisper.cpp
+#
+#      - name: Add msbuild to PATH
+#        uses: microsoft/setup-msbuild@v1
+#
+#      - name: Run build script
+#        run: |
+#          .\scripts\build.bat cpu ${{ github.workspace }}\whisper.cpp\
+#          cd ${{ github.workspace }}\whisper.cpp\build\bin\Release
+#          ren whisper.dll libwhisper.dll
+#
+#      - name: Upload Windows Build Artifacts
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: windows-build
+#          path: whisper.cpp/build/bin/Release/libwhisper.dll
+
+  build-windows-cuda:
+    name: Build for Windows (x86_64, CUDA)
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Checkout whisper.cpp
+        uses: actions/checkout@v4
+        with:
+          repository: ggerganov/whisper.cpp
+          ref: ${{ github.event.inputs.version }}
+          path: whisper.cpp
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1
+
+      - name: Install CUDA Toolkit
+        id: cuda-toolkit
+        uses: Jimver/cuda-toolkit@v0.2.11
+        with:
+          cuda: '12.2.0'
+
+      - name: Run build script
+        run: |
+          .\scripts\build.bat cuda ${{ github.workspace }}\whisper.cpp\
+          cd ${{ github.workspace }}\whisper.cpp\build\bin\Release
+          ren whisper.dll libwhisper_cuda.dll
+
+      - name: Upload Windows Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-build
+          path: whisper.cpp/build/bin/Release/libwhisper.dll
