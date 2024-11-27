@@ -32,11 +32,14 @@ jobs:
 #          cd ${{ github.workspace }}\whisper.cpp\build\bin\Release
 #          ren whisper.dll libwhisper.dll
       - name: Build Windows Native Libraries
-        run: make windows
+        run: |
+          cd whisper.cpp
+          cmake -S . -B ./build -A x64 -DCMAKE_BUILD_TYPE=Release -DWHISPER_BUILD_TESTS=OFF -DWHISPER_BUILD_EXAMPLES=OFF
+          cd ./build
+          msbuild ALL_BUILD.vcxproj -t:build -p:configuration=Release -p:platform=x64
 
       - name: Upload Windows Build Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: windows-build
-#          path: whisper.cpp/build/bin/Release/libwhisper.dll
-          path: runtimes/windows-*/*
+          path: whisper.cpp/build/bin/Release/libwhisper.dll
