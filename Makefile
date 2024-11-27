@@ -51,10 +51,12 @@ define windows_build
 	$(eval ARCH := $(1))
 	$(eval BUILD_PATH := $(BUILD_DIR)/windows-$(ARCH)$(2))
 	$(eval EXTRA_FLAGS := $(3))
-	rm -rf $(BUILD_PATH)
-	$(CMAKE) -S $(WHISPER_CPP_DIR) -B $(BUILD_PATH) -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_SYSTEM_PROCESSOR=$(ARCH) $(CMAKE_COMMON_PARAMS) $(EXTRA_FLAGS)
-	cd $(BUILD_PATH)
-	msbuild ALL_BUILD.vcxproj -t:build -p:configuration=Release -p:platform=$(ARCH)
+	if exist "$(BUILD_PATH)" rmdir /s /q "$(BUILD_PATH)"
+	$(CMAKE) -S $(WHISPER_CPP_DIR) -B $(BUILD_PATH) -A $(ARCH) $(CMAKE_COMMON_PARAMS) $(EXTRA_FLAGS)
+	cd "$(BUILD_PATH)" && msbuild ALL_BUILD.vcxproj -t:build -p:configuration=Release -p:platform=x64
+	if not exist "$(RUNTIME_DIR)\windows-$(TARGET)" mkdir "$(RUNTIME_DIR)\windows-$(TARGET)"
+	copy "$(BUILD_PATH)\src\Release\whisper.dll" "$(RUNTIME_DIR)\windows-$(TARGET)\"
+	copy "$(BUILD_PATH)\ggml\src\Release\ggml.dll" "$(RUNTIME_DIR)\windows-$(TARGET)\"
 endef
 
 # Linux build targets
@@ -102,7 +104,7 @@ windows_%:
 windows_cuda: $(addprefix windows_cuda_,$(WINDOWS_ARCHS))
 windows_cuda_%:
 	$(eval ARCH := $(subst windows_cuda_,,$@))
-	$(call windows_build,$(ARCH),_cuda,$(AVX_FLAGS) -DGGML_CUDA=ON -DWHISPER_CUBLAS=ON)
+	$(call windows_build,$(ARCH),_cuda,$(AVX_FLAGS) -DGGML_CUDA=ON)
 
 # Clean build artifacts
 .PHONY: clean

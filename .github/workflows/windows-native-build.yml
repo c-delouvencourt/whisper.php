@@ -1,0 +1,42 @@
+name: Windows Native Build
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Whisper.cpp tag, branch or commit to build'
+        default: v1.7.2
+
+  workflow_call:
+
+jobs:
+  build-windows:
+    name: Build for Windows (x86_64)
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Checkout whisper.cpp
+        uses: actions/checkout@v4
+        with:
+          repository: ggerganov/whisper.cpp
+          ref: ${{ github.event.inputs.version }}
+          path: whisper.cpp
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1
+
+#      - name: Run build script
+#        run: |
+#          .\scripts\build.bat cpu ${{ github.workspace }}\whisper.cpp\
+#          cd ${{ github.workspace }}\whisper.cpp\build\bin\Release
+#          ren whisper.dll libwhisper.dll
+      - name: Build Windows Native Libraries
+        run: make windows
+
+      - name: Upload Windows Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-build
+#          path: whisper.cpp/build/bin/Release/libwhisper.dll
+          path: runtimes/windows-*/*
