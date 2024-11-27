@@ -50,10 +50,8 @@ endef
 
 define windows_build
 	VSWHERE := $(shell dirname $(shell which vswhere.exe 2>/dev/null))
-    MSBUILD_PATH := $(shell \
-        $(VSWHERE)/vswhere.exe -products '*' -requires Microsoft.Component.MSBuild \
-        -property installationPath -latest 2>/dev/null | tr -d '\r')
-
+	VSINSTALL_PATH := $(shell $(VSWHERE)/vswhere.exe -products * -requires Microsoft.Component.MSBuild -property installationPath -latest)
+	echo $(VSINSTALL_PATH)
     # Fallback MSBuild paths
     MSBUILD_CANDIDATES := \
         "$(MSBUILD_PATH)/MSBuild/Current/Bin/MSBuild.exe" \
