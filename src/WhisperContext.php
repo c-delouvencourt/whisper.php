@@ -486,7 +486,7 @@ class WhisperContext
         $logger = Whisper::getLogger();
 
         if ($logger === null) {
-            $logCallback = function (int $level, string $text, ?CData $user_data) {};
+            $logCallback = function () {};
         } else {
             $logCallback = function (int $level, string $message, ?CData $user_data) use ($logger) {
                 $psrLevel = (LogLevel::tryFrom($level) ?? LogLevel::INFO)->toPsrLogLevel();

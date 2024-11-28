@@ -33,6 +33,8 @@ define linux_build
 	mkdir -p $(RUNTIME_DIR)/linux-$(ARCH)$(2)
 	cp $(BUILD_PATH)/src/libwhisper.so $(RUNTIME_DIR)/linux-$(ARCH)$(2)/
 	cp $(BUILD_PATH)/ggml/src/libggml.so $(RUNTIME_DIR)/linux-$(ARCH)$(2)/
+
+	patchelf --set-rpath '$$ORIGIN' $(RUNTIME_DIR)/linux-$(ARCH)$(2)/libwhisper.so
 endef
 
 # MacOS base build template
