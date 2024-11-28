@@ -81,52 +81,6 @@ class WhisperContext
     }
 
     /**
-     * Split the input audio in chunks and process each chunk separately using whisper_full_with_state()
-     *
-     * Result is stored in the default state of the context
-     * Not thread safe if executed in parallel on the same context.
-     * It seems this approach can offer some speedup in some cases.
-     * However, the transcription accuracy can be worse at the beginning and end of each chunk.
-     *
-     * @param  float[]  $pcm  Raw PCM audio data, 32 bit floating point at a sample rate of 16 kHz, 1 channel.
-     * @param  WhisperFullParams  $params  The parameters to use.
-     * @param  int  $nProcessors  The number of processors to use.
-     */
-    public function fullParallel(array $pcm, WhisperFullParams $params, int $nProcessors): void
-    {
-        if (empty($pcm)) {
-            // can randomly trigger segmentation faults if we don't check this
-            throw WhisperException::noSamples();
-        }
-
-        $pcmSize = count($pcm);
-        $samples = $this->ffi->new("float[$pcmSize]");
-
-        foreach ($pcm as $i => $sample) {
-            $samples[$i] = $sample;
-        }
-
-        $cParams = $params->toCStruct($this->ffi);
-        $result = $this->ffi->whisper_full_parallel(
-            $this->ctx,
-            $cParams,
-            $this->ffi->cast('float *', $samples),
-            $pcmSize,
-            $nProcessors
-        );
-
-        match ($result) {
-            -1, -2 => throw WhisperException::failedToCalculateSpectrogram(),
-            -3 => throw WhisperException::failedToAutoDetectLanguage(),
-            -5 => throw WhisperException::audioCtxLongerThanMax($params->audioCtx, $this->modelNAudioCtx()),
-            -6 => WhisperException::failedToEncode(),
-            -7, -8 => WhisperException::failedToDecode(),
-            0 => null,
-            default => throw WhisperException::genericError($result)
-        };
-    }
-
-    /**
      * Return the number of tokens in the vocabulary
      */
     public function nVocab(): int
@@ -490,7 +444,11 @@ class WhisperContext
         } else {
             $logCallback = function (int $level, string $message, ?CData $user_data) use ($logger) {
                 $psrLevel = (LogLevel::tryFrom($level) ?? LogLevel::INFO)->toPsrLogLevel();
-                $logger->log($psrLevel, $message);
+                try {
+                    $logger->log($psrLevel, $message);
+                } catch (\Throwable $e) {
+                    fwrite(STDERR, $e->getMessage());
+                }
             };
         }
 

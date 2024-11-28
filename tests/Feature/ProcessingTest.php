@@ -83,31 +83,6 @@ it('can process across multiple threads', function () {
     expect($numSegments)->toBeGreaterThan(0);
 });
 
-it('can handle parallel processing', function () {
-    ini_set('memory_limit', -1);
-    $ctx = new WhisperContext($this->modelPath);
-    $pcm = loadTestAudio('jfk');
-
-    $fullParams = WhisperFullParams::default();
-
-    $ctx->fullParallel($pcm, $fullParams, 2);
-
-    $numSegments = $ctx->nSegments();
-    expect($numSegments)->toBeGreaterThan(0);
-
-    for ($i = 0; $i < $numSegments; $i++) {
-        $segment = $ctx->getSegmentText($i);
-        $startTimestamp = $ctx->getSegmentStartTime($i);
-        $endTimestamp = $ctx->getSegmentEndTime($i);
-
-        // Verify segment data
-        expect($segment)->toBeString()
-            ->and($startTimestamp)->toBeInt()
-            ->and($endTimestamp)->toBeInt()
-            ->and($startTimestamp)->toBeLessThanOrEqual($endTimestamp);
-    }
-});
-
 it('can convert raw PCM audio to log mel spectrogram', function () {
     $ctx = new WhisperContext($this->modelPath);
     $state = $ctx->createState();
