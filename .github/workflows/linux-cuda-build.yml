@@ -2,11 +2,6 @@ name: Linux CUDA Build
 on:
   workflow_dispatch:
   workflow_call:
-  push:
-    branches: [main]
-    paths:
-      - 'src/**'
-      - '.github/workflows/linux-cuda-build.yml'
 
 jobs:
   linux-cuda-build:
