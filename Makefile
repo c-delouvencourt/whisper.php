@@ -10,7 +10,7 @@ RUNTIME_DIR ?= runtimes
 WHISPER_CPP_DIR ?= whisper.cpp
 
 # Platforms and architectures
-LINUX_ARCHS := x64 arm64
+LINUX_ARCHS := x64 aarch64
 MACOS_ARCHS := x86_64 arm64
 WINDOWS_ARCHS := x64
 
