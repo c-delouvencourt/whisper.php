@@ -36,7 +36,7 @@ class LibraryLoader
      */
     public static function getInstance(string $library): FFI
     {
-        if (! isset(self::$instances[$library])) {
+        if (!isset(self::$instances[$library])) {
             self::$instances[$library] = self::createFFIInstance($library);
         }
 
@@ -48,7 +48,7 @@ class LibraryLoader
      */
     private static function createFFIInstance(string $library): FFI
     {
-        if (! isset(self::LIBRARY_CONFIGS[$library])) {
+        if (!isset(self::LIBRARY_CONFIGS[$library])) {
             throw new RuntimeException("Unsupported library: {$library}");
         }
 
@@ -62,7 +62,7 @@ class LibraryLoader
             $detector->getPlatformIdentifier()
         );
 
-        if (! file_exists($libPath)) {
+        if (!file_exists($libPath)) {
             self::downloadLibraries();
         }
 
@@ -83,12 +83,12 @@ class LibraryLoader
 
     private static function getHeaderPath(string $headerFile): string
     {
-        return dirname(__DIR__)."/include/{$headerFile}";
+        return self::joinPaths(dirname(__DIR__), 'include', $headerFile);
     }
 
     private static function getLibraryPath(string $prefix, string $extension, string $platform): string
     {
-        return dirname(__DIR__)."/lib/{$platform}/{$prefix}.{$extension}";
+        return self::joinPaths(dirname(__DIR__), 'lib', $platform, "$prefix.$extension");
     }
 
     /**
@@ -98,7 +98,6 @@ class LibraryLoader
     {
         $detector = self::getPlatformDetector();
         $platform = $detector->getPlatformIdentifier();
-        $libDir = dirname(__DIR__).'/lib';
 
         $url = sprintf(self::DOWNLOAD_URL, $platform);
 
@@ -114,7 +113,7 @@ class LibraryLoader
             'Accept: application/octet-stream',
         ]);
 
-        if (! curl_exec($ch)) {
+        if (!curl_exec($ch)) {
             fclose($fp);
             unlink($tempFile);
             throw new \RuntimeException(sprintf('Failed to download libraries from %s: %s', $url, curl_error($ch)));
@@ -123,8 +122,8 @@ class LibraryLoader
         // Extract ZIP file
         $zip = new ZipArchive;
         if ($zip->open($tempFile) === true) {
-            $platformLibDir = "{$libDir}/{$platform}";
-            if (! is_dir($platformLibDir)) {
+            $platformLibDir = self::joinPaths(dirname(__DIR__), 'lib', $platform);
+            if (!is_dir($platformLibDir)) {
                 mkdir($platformLibDir, 0755, true);
             }
             $zip->extractTo($platformLibDir);
@@ -134,5 +133,24 @@ class LibraryLoader
         } else {
             throw new RuntimeException('Failed to downloaded ZIP');
         }
+    }
+
+    private static function joinPaths(string ...$args): string
+    {
+        $paths = [];
+
+        foreach ($args as $key => $path) {
+            if ($path === '') {
+                continue;
+            } elseif ($key === 0) {
+                $paths[$key] = rtrim($path, DIRECTORY_SEPARATOR);
+            } elseif ($key === count($paths) - 1) {
+                $paths[$key] = ltrim($path, DIRECTORY_SEPARATOR);
+            } else {
+                $paths[$key] = trim($path, DIRECTORY_SEPARATOR);
+            }
+        }
+
+        return preg_replace('#(?<!:)//+#', '/', implode(DIRECTORY_SEPARATOR, $paths));
     }
 }
