@@ -23,6 +23,7 @@ class PlatformDetector
         ],
         'windows' => [
             'x86_64' => ['dll', 'windows', 'x86_64'],
+            'AMD64' => ['dll', 'windows', 'x86_64'],
         ],
     ];
 
