@@ -43,10 +43,10 @@ class Whisper
      * Create a Whisper instance from a pretrained model
      *
      * @param  string  $modelName  Name/path of the pretrained model. Can be one of: 'tiny.en', 'tiny', 'base.en', 'base', 'small.en', 'small', 'medium.en', 'medium', 'large-v1', 'large-v2', 'large-v3', 'large'
-     * @param  WhisperFullParams|null  $params  Parameters to use when running the model
      * @param  string|null  $baseDir  Base directory to store the model. Defaults to the "$XDG_DATA_HOME/whisper.cpp" directory
+     * @param  WhisperFullParams|null  $params  Parameters to use when running the model
      */
-    public static function fromPretrained(string $modelName, ?WhisperFullParams $params = null, ?string $baseDir = null): self
+    public static function fromPretrained(string $modelName,  ?string $baseDir = null, ?WhisperFullParams $params = null,): self
     {
         if (! in_array($modelName, self::MODELS) && ! is_file($modelName)) {
             throw new \RuntimeException(

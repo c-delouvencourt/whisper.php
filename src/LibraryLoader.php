@@ -25,7 +25,8 @@ class LibraryLoader
         ],
     ];
 
-    private const DOWNLOAD_URL = 'https://huggingface.co/codewithkyrian/whisper.php/resolve/main/libs/%s.zip';
+    private const WHISPER_CPP_VERSION = '1.7.2';
+    private const DOWNLOAD_URL = 'https://huggingface.co/codewithkyrian/whisper.php/resolve/%s/libs/%s.zip';
 
     private static array $instances = [];
 
@@ -99,7 +100,7 @@ class LibraryLoader
         $detector = self::getPlatformDetector();
         $platform = $detector->getPlatformIdentifier();
 
-        $url = sprintf(self::DOWNLOAD_URL, $platform);
+        $url = sprintf(self::DOWNLOAD_URL, self::WHISPER_CPP_VERSION, $platform);
 
         $tempFile = tempnam(sys_get_temp_dir(), 'whisper-cpp-libs');
 
