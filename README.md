@@ -102,7 +102,7 @@ In the example above, it looks for `ggml-tiny.en.bin` in the `__DIR__./models` d
 locally, it automatically downloads it
 from the official `whisper.cpp` huggingface repository
 
-### Libraries Loading
+#### Libraries Loading
 
 Whisper.php relies on platform-specific shared libraries, which are automatically downloaded the first time you
 initialize a model context. While this may cause a slight delay on the initial run, the process is one-time (unless you
