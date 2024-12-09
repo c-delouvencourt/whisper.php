@@ -225,6 +225,27 @@ function outputCsv(array $segments, string $outputFilePath): string
     return $outputFilePath;
 }
 
+function outputJson(array $segments, string $outputFilePath): string
+{
+    if (! str_ends_with($outputFilePath, '.json')) {
+        $outputFilePath .= '.json';
+    }
+
+    if (! file_exists(dirname($outputFilePath))) {
+        mkdir(dirname($outputFilePath), 0755, true);
+    }
+
+    $json = json_encode(array_map(fn ($segment) => [
+        'start' => $segment->startTimestamp,
+        'end' => $segment->endTimestamp,
+        'text' => $segment->text,
+    ], $segments), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+
+    file_put_contents($outputFilePath, $json);
+
+    return $outputFilePath;
+}
+
 /**
  * Creates output files in multiple formats at once
  *

@@ -14,11 +14,6 @@ require_once __DIR__.'/../vendor/autoload.php';
 
 try {
     $fullParams = WhisperFullParams::default()
-        ->withSegmentCallback(function (SegmentData $data) {
-            $start = toTimestamp($data->startTimestamp);
-            $end = toTimestamp($data->endTimestamp);
-            printf("[%s - %s]: %s\n", $start, $end, $data->text);
-        })
         ->withTokenTimestamps()
         ->withSplitOnWord(true)
         ->withMaxLen(1)
@@ -38,6 +33,8 @@ try {
             $segment->text
         );
     }
+    $transcriptionPath = __DIR__.'/outputs/transcription.json';
+    \Codewithkyrian\Whisper\outputJson($segments, $transcriptionPath);
 } catch (WhisperException $e) {
     fprintf(STDERR, "Whisper error: %s\n", $e->getMessage());
     exit(1);
