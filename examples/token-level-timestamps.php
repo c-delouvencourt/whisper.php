@@ -7,7 +7,6 @@ use Codewithkyrian\Whisper\Whisper;
 use Codewithkyrian\Whisper\WhisperException;
 use Codewithkyrian\Whisper\WhisperFullParams;
 
-use function Codewithkyrian\Whisper\outputSrt;
 use function Codewithkyrian\Whisper\readAudio;
 use function Codewithkyrian\Whisper\toTimestamp;
 
@@ -20,6 +19,9 @@ try {
             $end = toTimestamp($data->endTimestamp);
             printf("[%s - %s]: %s\n", $start, $end, $data->text);
         })
+        ->withTokenTimestamps()
+        ->withSplitOnWord(true)
+        ->withMaxLen(1)
         ->withNThreads(4);
 
     $whisper = Whisper::fromPretrained('tiny.en', __DIR__.'/models', $fullParams);
@@ -28,9 +30,14 @@ try {
 
     $segments = $whisper->transcribe($audio, 4);
 
-    // Create output files
-    $transcriptionPath = __DIR__.'/outputs/transcription.srt';
-    outputSrt($segments, $transcriptionPath);
+    foreach ($segments as $segment) {
+        printf(
+            "[%s - %s]: %s\n",
+            toTimestamp($segment->startTimestamp),
+            toTimestamp($segment->endTimestamp),
+            $segment->text
+        );
+    }
 } catch (WhisperException $e) {
     fprintf(STDERR, "Whisper error: %s\n", $e->getMessage());
     exit(1);
