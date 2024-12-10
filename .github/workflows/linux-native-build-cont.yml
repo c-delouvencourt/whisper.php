@@ -19,7 +19,7 @@ jobs:
             path: whisper.cpp
 
         - name: Build Docker Image
-          run: docker build -t linux-native-build -f Dockerfile .
+          run: docker build -t linux-native-build -f linux-Dockerfile .
 
         - name: Create output directory
           run: mkdir -p ./artifacts
