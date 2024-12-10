@@ -10,6 +10,11 @@ jobs:
       image: ubuntu:18.04
 
     steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16.20.2'  # LTS version compatible with older GLIBC
+
       - name: Install essential build tools
         run: |
           apt-get update
