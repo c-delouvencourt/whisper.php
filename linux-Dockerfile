@@ -9,12 +9,18 @@ RUN apt-get update && \
     build-essential \
     git \
     wget \
-    cmake \
     software-properties-common \
     gcc-aarch64-linux-gnu \
     g++-aarch64-linux-gnu \
     gcc-arm-linux-gnueabihf \
     g++-arm-linux-gnueabihf
+
+
+# Install the latest CMake
+RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null && \
+    apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main' && \
+    apt-get update && \
+    apt-get install -y cmake
 
 # Set working directory
 WORKDIR /build
