@@ -1,0 +1,22 @@
+FROM ubuntu:18.04
+
+# Prevent interactive prompts
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install essential build tools
+RUN apt-get update && \
+    apt-get install -y \
+    build-essential \
+    git \
+    wget \
+    software-properties-common \
+    gcc-aarch64-linux-gnu \
+    g++-aarch64-linux-gnu \
+    gcc-arm-linux-gnueabihf \
+    g++-arm-linux-gnueabihf
+
+# Set working directory
+WORKDIR /build
+
+# Default command (can be overridden)
+CMD ["make", "linux"]
