@@ -16,7 +16,8 @@ RUN apt-get update && \
     g++-arm-linux-gnueabihf \
     gpg \
     ca-certificates \
-    curl
+    curl \
+    patchelf
 
 
 # Install the latest CMake
