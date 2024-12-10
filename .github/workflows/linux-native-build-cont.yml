@@ -1,0 +1,41 @@
+name: Linux Native Build (with container)
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  linux-native-build:
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:18.04
+
+    steps:
+      - name: Install essential build tools
+        run: |
+          apt-get update
+          apt-get install -y build-essential git wget software-properties-common
+
+      - name: Install cross-compilation toolchains
+        run: |
+          apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+          apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Checkout whisper.cpp
+        uses: actions/checkout@v4
+        with:
+          repository: ggerganov/whisper.cpp
+          ref: v1.7.2
+          path: whisper.cpp
+
+      - name: Build Linux Native Libraries
+        run: make linux
+
+      - name: Upload Linux Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-build
+          path: runtimes/linux-*/*
+          retention-days: 7
