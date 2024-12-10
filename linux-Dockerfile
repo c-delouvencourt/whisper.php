@@ -13,7 +13,10 @@ RUN apt-get update && \
     gcc-aarch64-linux-gnu \
     g++-aarch64-linux-gnu \
     gcc-arm-linux-gnueabihf \
-    g++-arm-linux-gnueabihf
+    g++-arm-linux-gnueabihf \
+    gpg \
+    ca-certificates \
+    curl
 
 
 # Install the latest CMake
