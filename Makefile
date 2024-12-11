@@ -50,7 +50,8 @@ endef
 
 # Linux base build template
 define linux_build
-	$(call select_compiler,$(1))
+	$(eval ARCH := $(1))
+	$(call select_linux_compiler,$(1))
 	$(eval BUILD_PATH := $(BUILD_DIR)/linux-$(ARCH)$(2))
 	$(eval EXTRA_FLAGS := $(3))
 	$(if $(filter aarch64,$(ARCH)),$(call create_aarch64_toolchain))
