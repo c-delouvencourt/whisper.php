@@ -21,15 +21,45 @@ NO_AVX_FLAGS := -DGGML_AVX=OFF -DGGML_AVX2=OFF -DGGML_FMA=OFF -DGGML_F16C=OFF
 # Common CMake parameters
 CMAKE_COMMON_PARAMS := -DCMAKE_BUILD_TYPE=$(BUILD_TYPE)
 
+define select_linux_compiler
+    $(eval ARCH := $(1))
+    $(if $(filter x64,$(ARCH)),\
+        $(eval CC := gcc)\
+        $(eval CXX := g++)\
+        $(eval CMAKE_ARCH_FLAGS := -DCMAKE_SYSTEM_PROCESSOR=x86_64),\
+    $(if $(filter aarch64,$(ARCH)),\
+        $(eval CC := aarch64-linux-gnu-gcc)\
+        $(eval CXX := aarch64-linux-gnu-g++)\
+        $(eval CMAKE_ARCH_FLAGS := -DCMAKE_SYSTEM_PROCESSOR=aarch64)\
+        $(eval EXTRA_FLAGS += -DCMAKE_TOOLCHAIN_FILE=$(CURDIR)/aarch64-toolchain.cmake),\
+        $(error Unsupported architecture: $(ARCH))))
+endef
+
+# Create toolchain file for aarch64 cross-compilation
+define create_aarch64_toolchain
+    echo '# Toolchain file for aarch64 cross-compilation' > aarch64-toolchain.cmake
+    echo 'set(CMAKE_SYSTEM_NAME Linux)' >> aarch64-toolchain.cmake
+    echo 'set(CMAKE_SYSTEM_PROCESSOR aarch64)' >> aarch64-toolchain.cmake
+    echo 'set(CMAKE_C_COMPILER aarch64-linux-gnu-gcc)' >> aarch64-toolchain.cmake
+    echo 'set(CMAKE_CXX_COMPILER aarch64-linux-gnu-g++)' >> aarch64-toolchain.cmake
+    echo 'set(CMAKE_FIND_ROOT_PATH /usr/aarch64-linux-gnu)' >> aarch64-toolchain.cmake
+    echo 'set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)' >> aarch64-toolchain.cmake
+    echo 'set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)' >> aarch64-toolchain.cmake
+    echo 'set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)' >> aarch64-toolchain.cmake
+endef
 
 # Linux base build template
 define linux_build
-	$(eval ARCH := $(1))
+	$(call select_compiler,$(1))
 	$(eval BUILD_PATH := $(BUILD_DIR)/linux-$(ARCH)$(2))
 	$(eval EXTRA_FLAGS := $(3))
+	$(if $(filter aarch64,$(ARCH)),$(call create_aarch64_toolchain))
+
 	rm -rf $(BUILD_PATH)
-	$(CMAKE) -S $(WHISPER_CPP_DIR) -B $(BUILD_PATH) -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_PROCESSOR=$(ARCH) $(CMAKE_COMMON_PARAMS) $(EXTRA_FLAGS)
-	$(CMAKE) --build $(BUILD_PATH)
+
+	CC=$(CC) CXX=$(CXX) $(CMAKE) -S $(WHISPER_CPP_DIR) -B $(BUILD_PATH) -DCMAKE_SYSTEM_NAME=Linux $(CMAKE_ARCH_FLAGS) $(CMAKE_COMMON_PARAMS) $(EXTRA_FLAGS)
+ 	CC=$(CC) CXX=$(CXX) $(CMAKE) --build $(BUILD_PATH)
+
 	mkdir -p $(RUNTIME_DIR)/linux-$(ARCH)$(2)
 	cp $(BUILD_PATH)/src/libwhisper.so $(RUNTIME_DIR)/linux-$(ARCH)$(2)/
 	cp $(BUILD_PATH)/ggml/src/libggml.so $(RUNTIME_DIR)/linux-$(ARCH)$(2)/
