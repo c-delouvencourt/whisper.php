@@ -10,10 +10,6 @@ RUN apt-get update && \
     git \
     wget \
     software-properties-common \
-    gcc-aarch64-linux-gnu \
-    g++-aarch64-linux-gnu \
-    gcc-arm-linux-gnueabihf \
-    g++-arm-linux-gnueabihf \
     gpg \
     ca-certificates \
     curl \
@@ -30,4 +26,4 @@ RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/nul
 WORKDIR /build
 
 # Default command (can be overridden)
-CMD ["make", "linux"]
+CMD ["make", "linux_x64"]
