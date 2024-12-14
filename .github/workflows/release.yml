@@ -6,7 +6,7 @@ permissions:
 
 on:
   release:
-    types: [ published, created, edited, prereleased ]
+    types: [ published, prereleased ]
 
   workflow_dispatch:
     inputs:
