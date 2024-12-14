@@ -1,54 +1,43 @@
 linux-x86_64:
   exclude:
-    - libs/linux-arm64
-    - libs/darwin-*
-    - libs/windows-*
+    - lib/linux-arm64
+    - lib/darwin-*
+    - lib/windows-*
     - "*.exe"
     - "*.dylib"
     - "**/*.windows.*"
 
 linux-arm64:
   exclude:
-    - libs/linux-x86_64
-    - libs/windows-*
-    - libs/darwin-*
+    - lib/linux-x86_64
+    - lib/windows-*
+    - lib/darwin-*
     - "*.exe"
     - "*.dylib"
     - "**/*.windows.*"
 
 darwin-x86_64:
   exclude:
-    - libs/darwin-arm64
-    - libs/windows-*
-    - libs/linux-*
+    - lib/darwin-arm64
+    - lib/windows-*
+    - lib/linux-*
     - "*.exe"
     - "*.so"
     - "**/*.linux.*"
 
 darwin-arm64:
   exclude:
-    - libs/darwin-x86_64
-    - libs/windows-*
-    - libs/linux-*
+    - lib/darwin-x86_64
+    - lib/windows-*
+    - lib/linux-*
     - "*.exe"
     - "*.so"
     - "**/*.linux.*"
 
 windows-x86_64:
   exclude:
-    - libs/windows-arm64
-    - libs/linux-*
-    - libs/darwin-*
-    - "*.so"
-    - "*.dylib"
-    - "**/*.darwin.*"
-    - "**/*.linux.*"
-
-windows-arm64:
-  exclude:
-    - libs/windows-x86_64
-    - libs/linux-*
-    - libs/darwin-*
+    - lib/linux-*
+    - lib/darwin-*
     - "*.so"
     - "*.dylib"
     - "**/*.darwin.*"
