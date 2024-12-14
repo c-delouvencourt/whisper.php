@@ -46,8 +46,7 @@
       "linux-arm64": "https://github.com/Codewithkyrian/whisper.php/releases/download/{version}/dist-linux-arm64.tar.gz",
       "darwin-x86_64": "https://github.com/Codewithkyrian/whisper.php/releases/download/{version}/dist-darwin-x86_64.tar.gz",
       "darwin-arm64": "https://github.com/Codewithkyrian/whisper.php/releases/download/{version}/dist-darwin-arm64.tar.gz",
-      "windows-x86_64": "https://github.com/Codewithkyrian/whisper.php/releases/download/{version}/dist-windows-x86_64.zip",
-      "windows-arm64": "https://github.com/Codewithkyrian/whisper.php/releases/download/{version}/dist-windows-arm64.zip"
+      "windows-x86_64": "https://github.com/Codewithkyrian/whisper.php/releases/download/{version}/dist-windows-x86_64.zip"
     }
   }
 }
