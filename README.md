@@ -21,8 +21,7 @@ Currently, whisper.php supports the following platforms:
 
 - Linux (x86_64 and arm64)
 - macOS (Apple Silicon and Intel)
-
-Note: Windows support is currently in development. Contributions and help are welcome to expand platform compatibility!
+- Windows (x86_64)
 
 ## Features
 
@@ -292,7 +291,6 @@ Whisper::setLogger(app('log'));
 
 Contributions are welcome! Especially for:
 
-- Windows platform support
 - Additional features
 - Bug fixes
 
