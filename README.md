@@ -3,6 +3,13 @@
 A PHP binding for [whisper.cpp](https://github.com/ggerganov/whisper.cpp/), enabling high-performance automatic speech
 recognition and transcription.
 
+<p align="center">
+<a href="https://packagist.org/packages/codewithkyrian/whisper.php"><img src="https://img.shields.io/packagist/dt/codewithkyrian/whisper.php" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/codewithkyrian/whisper.php"><img src="https://img.shields.io/packagist/v/codewithkyrian/whisper.php" alt="Latest Stable Version"></a>
+<a href="https://github.com/CodeWithKyrian/whisper.php/blob/main/LICENSE"><img src="https://img.shields.io/github/license/codewithkyrian/whisper.php" alt="License"></a>
+<a href="https://github.com/CodeWithKyrian/whisper.php/actions/workflows/tests.yml"><img src="https://github.com/CodeWithKyrian/whisper.php/actions/workflows/tests.yml/badge.svg" alt="Tests"></a>
+</p>
+
 ## Requirements
 
 - PHP 8.1+
