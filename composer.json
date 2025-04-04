@@ -1,5 +1,5 @@
 {
-  "name": "codewithkyrian/whisper.php",
+  "name": "cldt/whisper.php",
   "description": "PHP bindings for OpenAI Whisper made possible by whisper.cpp",
   "type": "platform-package",
   "require": {
@@ -29,8 +29,8 @@
   },
   "authors": [
     {
-      "name": "Kyrian Obikwelu",
-      "email": "kyrianobikwelu@gmail.com"
+      "name": "Clément de Louvencourt",
+      "email": "clement@meilleursbiens.com"
     }
   ],
   "config": {
